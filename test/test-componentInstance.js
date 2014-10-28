@@ -14,7 +14,7 @@ describe('componentInstance.js', function () {
             ['x.c', "1..1", "//document/p/b"]
         ]);
         var r = c.instance();
-        var filepath = path.join(__dirname, 'fixtures/componentInstance/file_1.xml');
+        var filepath = path.join(__dirname, 'fixtures/file_4.xml');
         var xmlfile = fs.readFileSync(filepath, 'utf-8');
         var doc = xml.parse(xmlfile);
         r.run(doc);
