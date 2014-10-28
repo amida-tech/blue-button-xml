@@ -1,12 +1,53 @@
 "use strict";
 
+var path = require('path');
+var fs = require('fs');
 var chai = require('chai');
 
 var component = require('../index').component;
 
+var bbxml = require('../index');
+var xml = require('../lib/xml');
+
 var expect = chai.expect;
+var component = bbxml.component;
 
 describe('component', function () {
+    it('templateId', function () {
+        var p = component.define('p');
+        p.fields([
+            ["a", "0..1", "h:a"],
+            ["b", "0..*", "h:b"],
+        ]);
+
+        var c = component.define('c');
+        c.templateRoot('999.999');
+        c.fields([
+            ["string", "0..1", "h:string"],
+            ["object", "0..1", "h:object", p],
+            ["array", "0..*", "h:array", p],
+            ["na", "1..1", "h:na"]
+        ]);
+
+        var root = component.define("root");
+        root.fields([
+            ["data", "1:1", c.xpath(), c]
+        ]);
+
+        var instance = root.instance();
+        var filepath = path.join(__dirname, 'fixtures/file_3.xml');
+        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var doc = xml.parse(xmlfile);
+        instance.run(doc);
+        instance.cleanupTree();
+
+        var ra = instance.toJSON();
+        expect(ra.data).to.exist;
+        expect(ra.data.object).to.exits;
+        expect(ra.data.string).to.exits;
+        expect(ra.data.array).to.exits;
+    });
+
     describe('permutation infrastrucure', function () {
         var component1 = null;
         var component2 = null;
@@ -205,7 +246,7 @@ describe('component', function () {
                 ["p21", "1..1", "h:prop0", prop21],
                 ["p22", "1..1", "h:prop0", prop22],
             ]);
-            component2.cleanupStep(namedCleanupStep('cu20sc1only'), ['sc1']);
+            component2.cleanupStep(namedCleanupStep('cu20sc1only'), 'sc1');
             component2.cleanupStep(namedCleanupStep('cu20'));
             component2.cleanupStep(namedCleanupStep('cu21'));
             component2.cleanupStep(namedCleanupStep('cu21both'), ['sc0', 'sc1']);
