@@ -1,4 +1,4 @@
-blue-button-model
+blue-button-xml
 =================
 
 Blue Button XML Parsing Infrastructure

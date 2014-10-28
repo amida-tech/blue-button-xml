@@ -7,10 +7,10 @@ var chai = require('chai');
 var component = require('../index').component;
 
 var bbxml = require('../index');
-var xml = require('../lib/xml');
 
 var expect = chai.expect;
 var component = bbxml.component;
+var xml = bbxml.xmlParser;
 
 describe('component', function () {
     it('templateId', function () {
