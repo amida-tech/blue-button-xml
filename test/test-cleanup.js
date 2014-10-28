@@ -204,6 +204,47 @@ describe('cleanup', function () {
         expect(ra.data.b).to.deep.equal(['propobj_b0', 'propobj_b1']);
     });
 
+    it('replaceWithField', function () {
+        var p = component.define('p');
+        p.fields([
+            ["a", "0..1", "a"],
+            ["b", "0..*", "b"],
+        ]);
+
+        var c = component.define('c');
+        c.fields([
+            ["string", "0..1", "string"],
+            ["object", "0..1", "object", p],
+            ["array", "0..*", "array", p]
+        ]);
+        c.cleanupStep(cleanup.replaceWithField(['string']));
+
+        var root = component.define("root");
+        root.fields([
+            ["data", "1:1", "//document/root", c]
+        ]);
+
+        var instance = root.instance();
+        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
+        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var doc = xml.parse(xmlfile);
+        instance.run(doc);
+
+        var rb = instance.toJSON();
+        expect(rb.data).to.exist;
+        expect(rb.data).to.have.property('string');
+        expect(rb.data).to.have.property('object');
+        expect(rb.data).to.have.property('array');
+
+        instance.cleanupTree();
+
+        var ra = instance.toJSON();
+        console.log(ra);
+
+        expect(ra.data).to.exist;
+        expect(ra.data).to.equal('value');
+    });
+
     it('removeField', function () {
         var p = component.define('p');
         p.fields([
@@ -237,7 +278,6 @@ describe('cleanup', function () {
         instance.cleanupTree();
 
         var ra = instance.toJSON();
-        console.log(ra);
 
         expect(ra.data).to.exist;
         expect(ra.data).not.to.have.property('object');
