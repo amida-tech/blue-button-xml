@@ -239,7 +239,6 @@ describe('cleanup', function () {
         instance.cleanupTree();
 
         var ra = instance.toJSON();
-        console.log(ra);
 
         expect(ra.data).to.exist;
         expect(ra.data).to.equal('value');

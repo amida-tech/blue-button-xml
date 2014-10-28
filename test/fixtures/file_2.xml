@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<root>
+		<string>value0</string>
+		<stringAttr value="attr0"/>
+		<bool>true</bool>
+		<bool>false</bool>
+		<bool>other</bool>
+		<float>1.5</float>
+		<float>0.75</float>
+		<floatAttr value="5.5"/>
+		<time value="2012"/>
+		<time value="201209"/>
+		<time value="20120915"/>
+		<time value="2012091521"/>
+		<time value="201209152122"/>
+		<time value="201209152122-0400"/>
+	</root>
+</document>
