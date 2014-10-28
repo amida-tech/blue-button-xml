@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<root>
+		<string>value</string>
+		<object> 
+			<a>propobj_a</a>
+			<b>propobj_b0</b>
+			<b>propobj_b1</b>
+		</object>
+		<array>
+			<a>proparr0_a</a>
+			<b>proparr0_b0</b>
+			<b>proparr0_b1</b>
+		</array>
+		<array>
+			<a>proparr1_a</a>
+			<b>proparr1_b0</b>
+			<b>proparr1_b1</b>
+		</array>
+	</root>
+</document>
