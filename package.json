@@ -25,10 +25,10 @@
   "engines": {
     "node": ">= 0.10.0"
   },
-  "dependencies": {    
+  "dependencies": {
   	"libxmljs": "*",
     "underscore": "1.6.x",
-    "xdate": "*"
+    "moment": "2.8.x"
   },
   "devDependencies": {
     "chai": "1.8.x",
