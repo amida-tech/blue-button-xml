@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document mlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:hl7-org:v3"
+	xmlns:cda="urn:hl7-org:v3" xmlns:sdtc="urn:hl7-org:sdtc">
+	<root>
+		<templateId root="person"/>
+		<id>123</id>
+		<name first="John" last="Doe"/>
+		<age>36</age>
+		<child name="Mary"/>
+		<child name="David"/>
+	</root>
+	<root>
+		<templateId root="person"/>
+		<id>126</id>
+		<name first="Larry" last="Savoy"/>
+		<age>32</age>
+		<child name="Mark"/>
+		<child name="Savage"/>
+	</root>
+</document>
