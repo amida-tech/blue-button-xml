@@ -37,7 +37,7 @@ describe('example_0', function () {
             ["firstname", "1..1", "h:name/@first"],
             ["lastname", "1..1", "h:name/@last"],
             ["age", "1..1", "h:age"],
-            ["children", "0..*", "h:child/@name"]
+            ["children", "1..*", "h:child/@name"]
         ]);
 
         var root = component.define("root");
@@ -45,14 +45,11 @@ describe('example_0', function () {
             ["data", "0..*", c.xpath(), c]
         ]);
 
-        var instance = root.instance();
         var filepath = path.join(__dirname, 'fixtures/file_6.xml');
         var xmlfile = fs.readFileSync(filepath, 'utf-8');
-        var doc = xml.parse(xmlfile);
-        instance.run(doc);
-        instance.cleanupTree();
-
+        var instance = root.run(xmlfile);
         var r = instance.toJSON();
+
         expect(r).to.deep.equal(expected);
     });
 });
