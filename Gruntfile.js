@@ -34,7 +34,8 @@ module.exports = function (grunt) {
                     'describe': true,
                     'before': true,
                     'after': true,
-                    'done': true
+                    'done': true,
+                    'Document': true
                 }
             }
         },
