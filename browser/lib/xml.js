@@ -3,15 +3,7 @@
 exports.parse = function (src) {
     var xml;
 
-    //libxmljs parser options
-
-    if (process.title === "node" || process.title === "grunt") {
-        var options = {
-            noblanks: true
-        };
-
-        xml = require("libxmljs").parseXmlString(src, options);
-    } else if (typeof src === "string") {
+    if (typeof src === "string") {
         xml = new DOMParser().parseFromString(src, "text/xml");
     } else if (typeof src === "object" && src.constructor === Document) {
         xml = src;
@@ -67,22 +59,16 @@ exports.xpath = (function () {
     };
 
     return function (doc, p, ns) {
-        var r;
-
-        if (doc.find) {
-            r = doc.find(p, ns || DEFAULT_NS);
-        } else {
-            r = [];
-            var riter = (doc.ownerDocument || doc).evaluate(p, doc, function (n) {
-                return (ns || DEFAULT_NS)[n] || null;
-            }, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-            while (true) {
-                var tmp = riter.iterateNext();
-                if (tmp) {
-                    r.push(tmp);
-                } else {
-                    break;
-                }
+        var r = [];
+        var riter = (doc.ownerDocument || doc).evaluate(p, doc, function (n) {
+            return (ns || DEFAULT_NS)[n] || null;
+        }, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        while (true) {
+            var tmp = riter.iterateNext();
+            if (tmp) {
+                r.push(tmp);
+            } else {
+                break;
             }
         }
         return r;
