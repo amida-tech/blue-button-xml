@@ -3,8 +3,11 @@
   "version": "1.3.0-beta.1",
   "description": "Blue Button XML Parsing Infrastructure",
   "main": "/index.js",
+  "browser": {
+      "./lib/xml.js": "./browser/lib/xml.js"
+    },
   "directories": {
-    "doc": "doc",
+    "doc": "docs",
     "lib": "lib"
   },
   "scripts": {
