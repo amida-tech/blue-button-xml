@@ -33,10 +33,10 @@ describe('example_0', function () {
         var c = component.define('c');
         c.templateRoot('person');
         c.fields([
-            ["id", "1..1", "h:id"],
+            ["id", "1..1", "h:id/text()"],
             ["firstname", "1..1", "h:name/@first"],
             ["lastname", "1..1", "h:name/@last"],
-            ["age", "1..1", "h:age"],
+            ["age", "1..1", "h:age/text()"],
             ["children", "1..*", "h:child/@name"]
         ]);
 
