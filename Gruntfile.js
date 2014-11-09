@@ -12,7 +12,7 @@ module.exports = function (grunt) {
     // Project configuration.
     grunt.initConfig({
         jshint: {
-            files: ['*.js', './lib/*.js'],
+            files: ['*.js', './lib/*.js', './browser/lib/*.js'],
             options: {
                 browser: true,
                 smarttabs: true,
@@ -47,13 +47,13 @@ module.exports = function (grunt) {
         },
         jsbeautifier: {
             beautify: {
-                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js'],
+                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js', '*.json', './browser/lib/*.js'],
                 options: {
                     config: '.jsbeautifyrc'
                 }
             },
             check: {
-                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js'],
+                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js', './browser/lib/*.js'],
                 options: {
                     mode: 'VERIFY_ONLY',
                     config: '.jsbeautifyrc'
