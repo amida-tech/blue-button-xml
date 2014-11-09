@@ -8,6 +8,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-istanbul-coverage');
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-jsbeautifier');
+    grunt.loadNpmTasks('grunt-browserify');
 
     // Project configuration.
     grunt.initConfig({
@@ -96,11 +97,21 @@ module.exports = function (grunt) {
                 dir: 'coverage/',
                 root: '.'
             }
+        },
+        browserify: {
+            options: {
+                debug: true,
+                alias: "./index.js:bbxml"
+            },
+            dev: {
+                src: 'index.js',
+                dest: 'browser/dist/bbxml.js'
+            }
         }
     });
 
     // Default task.
-    grunt.registerTask('default', ['beautify', 'jshint', 'mochaTest']);
+    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'mochaTest']);
     //Express omitted for travis build.
     grunt.registerTask('commit', ['jshint', 'mochaTest']);
     grunt.registerTask('mocha', ['mochaTest']);
