@@ -29,7 +29,7 @@ describe('Service: PeopleDataService', function () {
     describe('Public API usage', function() {
         describe('getPerson()', function() {
             var db;
-            
+
             it('should return the xml database', function() {
                 db = PeopleDBService.getDBXml();
                 expect(db).to.exist;
@@ -38,14 +38,22 @@ describe('Service: PeopleDataService', function () {
             it('should return the first person', function() {
                 var person = PeopleDataService.getPerson(db, "123");
                 expect(person).to.exist;
-
+                expect(person.id).to.equal("123");
+                expect(person.firstname).to.equal("John");
+                expect(person.lastname).to.equal("Doe");
+                expect(person.age).to.equal("36");
+                expect(person.children).to.deep.equal(["Mary", "David"]);
             });
 
             it('should return the second person', function() {
                 var person = PeopleDataService.getPerson(db, "126");
                 expect(person).to.exist;
+                expect(person.id).to.equal("126");
+                expect(person.firstname).to.equal("Larry");
+                expect(person.lastname).to.equal("Savoy");
+                expect(person.age).to.equal("32");
+                expect(person.children).to.deep.equal(["Mar", "Savage"]);
             });
         });
     });
-
 });
