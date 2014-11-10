@@ -5,6 +5,10 @@ describe('Service: PeopleDataService', function () {
     var PeopleDataService;
     var PeopleDBService;
 
+    dump("********");
+    dump(module.toString());
+    dump("*********")
+
     // load the application module
     beforeEach(module('bbUI'));
 
