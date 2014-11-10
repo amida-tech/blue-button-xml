@@ -1,18 +1,21 @@
 /*global module*/
 
 module.exports = function (grunt) {
-
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-istanbul-coverage');
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-jsbeautifier');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Project configuration.
     grunt.initConfig({
         jshint: {
-            files: ['*.js', './lib/*.js'],
+            files: ['*.js', './lib/*.js', './browser/lib/*.js'],
             options: {
                 browser: true,
                 smarttabs: true,
@@ -34,7 +37,8 @@ module.exports = function (grunt) {
                     'describe': true,
                     'before': true,
                     'after': true,
-                    'done': true
+                    'done': true,
+                    'Document': true
                 }
             }
         },
@@ -46,13 +50,13 @@ module.exports = function (grunt) {
         },
         jsbeautifier: {
             beautify: {
-                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js'],
+                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js', '*.json', './browser/lib/*.js'],
                 options: {
                     config: '.jsbeautifyrc'
                 }
             },
             check: {
-                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js'],
+                src: ['Gruntfile.js', 'lib/*.js', 'test/*.js', '*.js', './browser/lib/*.js'],
                 options: {
                     mode: 'VERIFY_ONLY',
                     config: '.jsbeautifyrc'
@@ -95,11 +99,58 @@ module.exports = function (grunt) {
                 dir: 'coverage/',
                 root: '.'
             }
+        },
+        browserify: {
+            options: {
+                debug: true,
+                alias: "./index.js:bbxml"
+            },
+            dev: {
+                src: 'index.js',
+                dest: 'browser/dist/bbxml.js'
+            }
+        },
+        copy: {
+            main: {
+                files: [{
+                    cwd: 'bower_components/',
+                    expand: true,
+                    src: '**',
+                    dest: 'angulartest/app/lib/'
+                }, {
+                    cwd: 'browser',
+                    expand: true,
+                    src: 'dist/*',
+                    dest: 'angulartest/app/lib/'
+                }]
+            }
+        },
+        karma: {
+            e2e: {
+                configFile: 'karma-e2e.conf.js',
+                singleRun: true,
+                browsers: ['Chrome']
+            },
+            unit: {
+                configFile: 'karma.conf.js',
+                singleRun: true,
+                browsers: ['Firefox']
+            }
+        },
+        connect: {
+            server: {
+                options: {
+                    hostname: 'localhost',
+                    base: './angulartest/app',
+                    directory: './angulartest/app',
+                    port: 8080
+                }
+            }
         }
     });
 
     // Default task.
-    grunt.registerTask('default', ['beautify', 'jshint', 'mochaTest']);
+    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'copy', 'mochaTest', 'karma:unit']);
     //Express omitted for travis build.
     grunt.registerTask('commit', ['jshint', 'mochaTest']);
     grunt.registerTask('mocha', ['mochaTest']);
@@ -109,5 +160,5 @@ module.exports = function (grunt) {
 
     //JS beautifier
     grunt.registerTask('beautify', ['jsbeautifier:beautify']);
-
+    grunt.registerTask('e2e', ['browserify', 'copy', 'connect', 'karma:e2e']);
 };
