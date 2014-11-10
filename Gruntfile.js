@@ -116,12 +116,12 @@ module.exports = function (grunt) {
                     cwd: 'bower_components/',
                     expand: true,
                     src: '**',
-                    dest: 'test/browserapp/lib/'
+                    dest: 'angulartest/app/lib/'
                 }, {
                     cwd: 'browser',
                     expand: true,
                     src: 'dist/*',
-                    dest: 'test/browserapp/lib/'
+                    dest: 'angulartest/app/lib/'
                 }]
             }
         },

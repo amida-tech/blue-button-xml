@@ -11,13 +11,13 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'test/browserapp/lib/angular/angular.js',
-            'test/browserapp/lib/angular-route/angular-route.js',
-            'test/browserapp/lib/angular-mocks/angular-mocks.js',
-            'test/browserapp/lib/dist/bbxml.js',
-            'test/browserapp/scripts/app.js',
-            'test/browserapp/scripts/**/*.js',
-            'test/angularunit/**/*.js'
+            'angulartest/app/lib/angular/angular.js',
+            'angulartest/app/lib/angular-route/angular-route.js',
+            'angulartest/app/lib/angular-mocks/angular-mocks.js',
+            'angulartest/app/lib/dist/bbxml.js',
+            'angulartest/app/scripts/app.js',
+            'angulartest/app/scripts/**/*.js',
+            'angulartest/unit/**/*.js'
         ],
 
         // list of files to exclude
