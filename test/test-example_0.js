@@ -10,7 +10,7 @@ var bbxml = require('../index');
 
 var expect = chai.expect;
 var component = bbxml.component;
-var xml = bbxml.xmlParser;
+var xml = bbxml.xmlUtil;
 
 describe('example_0', function () {
     var expected = {
