@@ -26,5 +26,7 @@ node_modules
 bower_components
 browser/dist
 
+test/browserapp/lib
+
 # Users Environment Variables
 .lock-wscript

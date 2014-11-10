@@ -44,7 +44,12 @@
         "grunt-browserify": "*",
         "mocha": "1.17.x",
         "mocha-lcov-reporter": "0.0.1",
-        "path": "^0.4.9"
+        "path": "^0.4.9",
+        "karma": "0.12.x",
+        "karma-mocha": "0.1.x",
+        "karma-chai": "0.1.x",
+        "karma-ng-scenario": "0.1.x",
+        "karma-chrome-launcher": "0.1.x"
     },
     "repository": {
         "type": "git",
