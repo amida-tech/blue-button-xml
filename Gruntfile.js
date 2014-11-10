@@ -128,6 +128,11 @@ module.exports = function (grunt) {
         karma: {
             unit: {
                 configFile: 'karma.conf.js'
+            },
+            travis: {
+                configFile: 'karma.conf.js',
+                singleRun: true,
+                browsers: ['Firefox']
             }
         }
     });
