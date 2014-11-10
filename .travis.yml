@@ -9,6 +9,7 @@ before_script:
     - npm install -g karma-ng-scenario
     - npm install -g mocha
     - npm install -g istanbul
+    - npm install -g grunt-cli
     - npm install -g bower
     - bower install
     - export DISPLAY=:99.0
