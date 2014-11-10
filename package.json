@@ -51,7 +51,7 @@
         "karma-mocha": "0.1.x",
         "karma-chai": "0.1.x",
         "karma-ng-scenario": "0.1.x",
-        "karma-chrome-launcher": "0.1.x"
+        "karma-firefox-launcher": "0.1.x"
     },
     "repository": {
         "type": "git",
