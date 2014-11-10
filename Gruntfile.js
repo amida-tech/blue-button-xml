@@ -9,6 +9,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-karma');
 
     // Project configuration.
     grunt.initConfig({
@@ -107,11 +109,31 @@ module.exports = function (grunt) {
                 src: 'index.js',
                 dest: 'browser/dist/bbxml.js'
             }
+        },
+        copy: {
+            main: {
+                files: [{
+                    cwd: 'bower_components/',
+                    expand: true,
+                    src: '**',
+                    dest: 'test/browserapp/lib/'
+                }, {
+                    cwd: 'browser',
+                    expand: true,
+                    src: 'dist/*',
+                    dest: 'test/browserapp/lib/'
+                }]
+            }
+        },
+        karma: {
+            unit: {
+                configFile: 'karma.conf.js'
+            }
         }
     });
 
     // Default task.
-    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'mochaTest']);
+    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'copy', 'mochaTest', 'karma']);
     //Express omitted for travis build.
     grunt.registerTask('commit', ['jshint', 'mochaTest']);
     grunt.registerTask('mocha', ['mochaTest']);

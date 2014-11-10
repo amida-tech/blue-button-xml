@@ -42,6 +42,8 @@
         "grunt-jsbeautifier": "^0.2.7",
         "grunt-mocha-test": "0.8.x",
         "grunt-browserify": "*",
+        "grunt-contrib-copy": "0.7.x",
+        "grunt-karma": "0.9.x",
         "mocha": "1.17.x",
         "mocha-lcov-reporter": "0.0.1",
         "path": "^0.4.9",
