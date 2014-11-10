@@ -1,58 +1,70 @@
 {
-  "name": "blue-button-xml",
-  "version": "1.3.0-beta.1",
-  "description": "Blue Button XML Parsing Infrastructure",
-  "main": "/index.js",
-  "directories": {
-    "doc": "doc",
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "grunt test"
-  },
-  "author": "Dmitry Kachaev <dmitry@amida-tech.com>",
-  "contributors": [
-    {
-      "name": "Matthew McCall",
-      "email": "matt@amida-tech.com"
+    "name": "blue-button-xml",
+    "version": "1.3.0-beta.1",
+    "description": "Blue Button XML Parsing Infrastructure",
+    "main": "./index.js",
+    "browser": {
+        "./lib/xml.js": "./browser/lib/xml.js"
     },
-    {
-      "name": "Afsin Ustundag",
-      "email": "afsin.ustundag@us.pwc.com"
-    }
-  ],
-  "license": "Apache-2.0",
-  "engines": {
-    "node": ">= 0.10.0"
-  },
-  "dependencies": {    
-  	"libxmljs": "*",
-    "underscore": "1.6.x",
-    "xdate": "*"
-  },
-  "devDependencies": {
-    "chai": "1.8.x",
-    "coveralls": "~2.10.0",
-    "grunt": "0.4.x",
-    "grunt-contrib-jshint": "0.8.x",
-    "grunt-contrib-watch": "0.6.x",
-    "grunt-coveralls": "*",
-    "grunt-istanbul-coverage": "*",
-    "grunt-jsbeautifier": "^0.2.7",
-    "grunt-mocha-test": "0.8.x",
-    "mocha": "1.17.x",
-    "mocha-lcov-reporter": "0.0.1",
-    "path": "^0.4.9"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/amida-tech/blue-button-model.git"
-  },
-  "keywords": [
-    "bluebutton,xml,parsing"
-  ],
-  "bugs": {
-    "url": "https://github.com/amida-tech/blue-button-xml/issues"
-  },
-  "homepage": "https://github.com/amida-tech/blue-button-xml"
+    "directories": {
+        "doc": "docs",
+        "lib": "lib"
+    },
+    "scripts": {
+        "test": "grunt test"
+    },
+    "author": "Dmitry Kachaev <dmitry@amida-tech.com>",
+    "contributors": [{
+        "name": "Matthew McCall",
+        "email": "matt@amida-tech.com"
+    }, {
+        "name": "Afsin Ustundag",
+        "email": "afsin.ustundag@us.pwc.com"
+    }],
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">= 0.10.0"
+    },
+    "dependencies": {
+        "browserify": "*",
+        "libxmljs": "*",
+        "underscore": "1.6.x",
+        "xdate": "*"
+    },
+    "devDependencies": {
+        "chai": "1.8.x",
+        "coveralls": "~2.10.0",
+        "grunt": "0.4.x",
+        "grunt-contrib-jshint": "0.8.x",
+        "grunt-contrib-watch": "0.6.x",
+        "grunt-coveralls": "*",
+        "grunt-istanbul-coverage": "*",
+        "grunt-jsbeautifier": "^0.2.7",
+        "grunt-mocha-test": "0.8.x",
+        "grunt-browserify": "*",
+        "grunt-contrib-copy": "0.7.x",
+        "grunt-karma": "0.9.x",
+        "grunt-contrib-connect": "0.9.x",
+        "mocha": "1.17.x",
+        "mocha-lcov-reporter": "0.0.1",
+        "path": "^0.4.9",
+        "karma": "0.12.x",
+        "karma-ng-scenario": "0.1.x",
+        "karma-mocha": "0.1.x",
+        "karma-chai": "0.1.x",
+        "karma-ng-html2js-preprocessor": "0.1.0",
+        "karma-firefox-launcher": "0.1.x",
+        "karma-chrome-launcher": "0.1.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/amida-tech/blue-button-model.git"
+    },
+    "keywords": [
+        "bluebutton,xml,parsing"
+    ],
+    "bugs": {
+        "url": "https://github.com/amida-tech/blue-button-xml/issues"
+    },
+    "homepage": "https://github.com/amida-tech/blue-button-xml"
 }
