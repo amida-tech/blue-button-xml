@@ -1,6 +1,6 @@
 {
     "name": "blue-button-xml",
-    "version": "1.3.0-beta.1",
+    "version": "1.3.0-beta.2",
     "description": "Blue Button XML Parsing Infrastructure",
     "main": "./index.js",
     "browser": {
@@ -29,7 +29,7 @@
         "browserify": "*",
         "libxmljs": "*",
         "underscore": "1.6.x",
-        "xdate": "*"
+        "moment": "2.8.x"
     },
     "devDependencies": {
         "chai": "1.8.x",
