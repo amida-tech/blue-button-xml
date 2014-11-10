@@ -48,9 +48,10 @@
         "mocha-lcov-reporter": "0.0.1",
         "path": "^0.4.9",
         "karma": "0.12.x",
+        "karma-ng-scenario": "0.1.x",
         "karma-mocha": "0.1.x",
         "karma-chai": "0.1.x",
-        "karma-ng-scenario": "0.1.x",
+        "karma-ng-html2js-preprocessor": "0.1.0",
         "karma-firefox-launcher": "0.1.x"
     },
     "repository": {
