@@ -1,7 +1,6 @@
 /*global module*/
 
 module.exports = function (grunt) {
-
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -11,6 +10,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Project configuration.
     grunt.initConfig({
@@ -126,19 +126,31 @@ module.exports = function (grunt) {
             }
         },
         karma: {
-            //unit: {
-            //    configFile: 'karma.conf.js'
-            //},
-            travis: {
+            e2e: {
+                configFile: 'karma-e2e.conf.js',
+                singleRun: true,
+                browsers: ['Chrome']
+            },
+            unit: {
                 configFile: 'karma.conf.js',
                 singleRun: true,
                 browsers: ['Firefox']
+            }
+        },
+        connect: {
+            server: {
+                options: {
+                    hostname: 'localhost',
+                    base: './angulartest/app',
+                    directory: './angulartest/app',
+                    port: 8080
+                }
             }
         }
     });
 
     // Default task.
-    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'copy', 'mochaTest', 'karma']);
+    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'copy', 'mochaTest', 'karma:unit']);
     //Express omitted for travis build.
     grunt.registerTask('commit', ['jshint', 'mochaTest']);
     grunt.registerTask('mocha', ['mochaTest']);
@@ -148,5 +160,5 @@ module.exports = function (grunt) {
 
     //JS beautifier
     grunt.registerTask('beautify', ['jsbeautifier:beautify']);
-
+    grunt.registerTask('e2e', ['browserify', 'copy', 'connect', 'karma:e2e']);
 };

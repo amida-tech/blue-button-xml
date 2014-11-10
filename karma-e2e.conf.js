@@ -9,7 +9,7 @@ module.exports = function (config) {
             'angulartest/e2e/**/*.js'
         ],
 
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_ERROR,
 
         autoWatch: false,
 
