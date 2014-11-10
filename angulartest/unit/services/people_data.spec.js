@@ -52,7 +52,7 @@ describe('Service: PeopleDataService', function () {
                 expect(person.firstname).to.equal("Larry");
                 expect(person.lastname).to.equal("Savoy");
                 expect(person.age).to.equal("32");
-                expect(person.children).to.deep.equal(["Mar", "Savage"]);
+                expect(person.children).to.deep.equal(["Mark", "Savage"]);
             });
         });
     });

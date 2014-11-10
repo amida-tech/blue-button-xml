@@ -6,14 +6,14 @@ module.exports = function (config) {
         basePath: '',
 
         files: [
-            'test/e2e/**/*.js'
+            'angulartest/e2e/**/*.js'
         ],
 
         logLevel: config.LOG_DEBUG,
 
         autoWatch: false,
 
-        browsers: ['Chrome'],
+        browsers: ['Firefox'],
 
         frameworks: ['ng-scenario'],
 
