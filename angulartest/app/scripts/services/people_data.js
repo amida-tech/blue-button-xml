@@ -2,7 +2,7 @@
 
 bbUI.factory('PeopleDataService', function() {
 	var parser = (function() {
-		var bbxml = require('bbxml');
+		var bbxml = require('blue-button-xml');
     	var component = bbxml.component;
 
     	var c = component.define('c');
