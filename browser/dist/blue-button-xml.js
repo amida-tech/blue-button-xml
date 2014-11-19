@@ -598,22 +598,22 @@ var asTimestamp = processor.asTimestamp = function (v) {
     var ret = new XDate(0, 0, 1, 0, 0, 0, 0, true); // UTC mode
 
     if (t.length >= 4) {
-        ret.setFullYear(parseInt(t.slice(0, 4)));
+        ret.setFullYear(parseInt(t.slice(0, 4), 10));
     }
     if (t.length >= 6) {
-        ret.setMonth(parseInt(t.slice(4, 6)) - 1);
+        ret.setMonth(parseInt(t.slice(4, 6), 10) - 1);
     }
     if (t.length >= 8) {
-        ret.setDate(parseInt(t.slice(6, 8)));
+        ret.setDate(parseInt(t.slice(6, 8), 10));
     }
     if (t.length >= 10) {
-        ret.setHours(parseInt(t.slice(8, 10)));
+        ret.setHours(parseInt(t.slice(8, 10), 10));
     }
     if (t.length >= 12) {
-        ret.setMinutes(parseInt(t.slice(10, 12)));
+        ret.setMinutes(parseInt(t.slice(10, 12), 10));
     }
     if (t.length >= 14) {
-        ret.setSeconds(parseInt(t.slice(12, 14)));
+        ret.setSeconds(parseInt(t.slice(12, 14), 10));
     }
     //return ret.toDate();
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
