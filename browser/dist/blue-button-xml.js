@@ -40,7 +40,7 @@ exports.leafNodeValue = function (node) {
             ret = node.data();
         }
     } else {
-        throw "Couldn't find a string value for " + node;
+        ret = "";
     }
 
     //removes all linebreaks, tabs, and dedups whitespaces after
@@ -61,7 +61,9 @@ exports.xpath = (function () {
 
     return function (doc, p, ns) {
         var r = [];
-        var riter = (doc.ownerDocument || doc).evaluate(p, doc, function (n) {
+        var a = doc.ownerDocument || doc;
+        var b = doc.ownerDocument ? doc : doc.documentElement;
+        var riter = a.evaluate(p, b, function (n) {
             return (ns || DEFAULT_NS)[n] || null;
         }, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
         while (true) {
