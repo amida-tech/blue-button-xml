@@ -107,7 +107,7 @@ module.exports = function (grunt) {
             },
             dev: {
                 src: 'index.js',
-                dest: 'browser/dist/blue-button-xml.js'
+                dest: 'dist/blue-button-xml.js'
             }
         },
         copy: {
@@ -118,7 +118,6 @@ module.exports = function (grunt) {
                     src: '**',
                     dest: 'angulartest/app/lib/'
                 }, {
-                    cwd: 'browser',
                     expand: true,
                     src: 'dist/*',
                     dest: 'angulartest/app/lib/'
