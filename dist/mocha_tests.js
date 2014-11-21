@@ -9873,10 +9873,8 @@ return XDate;
 })(Date, Math, Array);
 
 },{}],51:[function(require,module,exports){
-(function (__dirname){
 "use strict";
 
-var path = require('path');
 
 var chai = require('chai');
 
@@ -9895,18 +9893,18 @@ describe('cleanup', function () {
 
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
             ["id", "0..*", "id", id]
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["null_string", "0..1", "nullString"],
+            ["null_string", "0..1", "nullString/text()"],
             ["null_object", "0..1", "nullObject", p],
             ["null_object_array", "0..*", "nullArray", p],
             ["empty_object_array", "0..*", "emptyArray", p],
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -9917,8 +9915,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_0.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<emptyArray />\n\t\t<emptyArray>\n\t\t\t<b/>\n\t\t\t<b/>\n\t\t</emptyArray>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t\t<id na=\"na\"/>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -9962,7 +9959,7 @@ describe('cleanup', function () {
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -9974,8 +9971,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -9995,13 +9991,13 @@ describe('cleanup', function () {
     it('replaceObject', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -10015,8 +10011,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -10039,13 +10034,13 @@ describe('cleanup', function () {
     it('extractAllFields', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -10057,8 +10052,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -10083,13 +10077,13 @@ describe('cleanup', function () {
     it('replaceWithField', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -10101,8 +10095,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -10129,7 +10122,7 @@ describe('cleanup', function () {
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -10141,8 +10134,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -10159,9 +10151,7 @@ describe('cleanup', function () {
     });
 });
 
-}).call(this,"/test")
-},{"../index":2,"../lib/xml":1,"chai":9,"path":45}],52:[function(require,module,exports){
-(function (__dirname){
+},{"../index":2,"../lib/xml":1,"chai":9}],52:[function(require,module,exports){
 "use strict";
 
 var path = require('path');
@@ -10180,17 +10170,17 @@ describe('component', function () {
     it('templateId', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "h:a"],
-            ["b", "0..*", "h:b"],
+            ["a", "0..1", "h:a/text()"],
+            ["b", "0..*", "h:b/text()"],
         ]);
 
         var c = component.define('c');
         c.templateRoot('999.999');
         c.fields([
-            ["string", "0..1", "h:string"],
+            ["string", "0..1", "h:string/text()"],
             ["object", "0..1", "h:object", p],
             ["array", "0..*", "h:array", p],
-            ["na", "1..1", "h:na"]
+            ["na", "1..1", "h:na/text()"]
         ]);
 
         var root = component.define("root");
@@ -10199,8 +10189,7 @@ describe('component', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_3.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document mlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\"\n\txmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"999.999\"/>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
         instance.cleanupTree();
@@ -10438,12 +10427,9 @@ describe('component', function () {
     });
 });
 
-}).call(this,"/test")
 },{"../index":2,"chai":9,"path":45}],53:[function(require,module,exports){
-(function (__dirname){
 var expect = require('chai').expect;
 
-var path = require('path');
 
 var component = require('../index').component;
 var xml = require('../lib/xml');
@@ -10452,13 +10438,12 @@ describe('componentInstance.js', function () {
     it('setJS path with .', function (done) {
         var c = component.define('test');
         c.fields([
-            ['a', "1..1", "//document/a"],
-            ['x.b', "1..1", "//document/p/b"],
-            ['x.c', "1..1", "//document/p/b"]
+            ['a', "1..1", "//document/a/text()"],
+            ['x.b', "1..1", "//document/p/b/text()"],
+            ['x.c', "1..1", "//document/p/b/text()"]
         ]);
         var r = c.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_4.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<a>valuea</a>\n\t<p>\n\t\t<b>valueb</b>\n\t</p>\n</document>\n";
         var doc = xml.parse(xmlfile);
         r.run(doc);
         var f = r.toJSON();
@@ -10471,12 +10456,9 @@ describe('componentInstance.js', function () {
     });
 });
 
-}).call(this,"/test")
-},{"../index":2,"../lib/xml":1,"chai":9,"path":45}],54:[function(require,module,exports){
-(function (__dirname){
+},{"../index":2,"../lib/xml":1,"chai":9}],54:[function(require,module,exports){
 "use strict";
 
-var path = require('path');
 
 var chai = require('chai');
 
@@ -10521,8 +10503,7 @@ describe('example_0', function () {
             ["data", "0..*", c.xpath(), c]
         ]);
 
-        var filepath = path.join(__dirname, 'fixtures/file_6.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document mlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\"\n\txmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>123</id>\n\t\t<name first=\"John\" last=\"Doe\"/>\n\t\t<age>36</age>\n\t\t<child name=\"Mary\"/>\n\t\t<child name=\"David\"/>\n\t</root>\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>126</id>\n\t\t<name first=\"Larry\" last=\"Savoy\"/>\n\t\t<age>32</age>\n\t\t<child name=\"Mark\"/>\n\t\t<child name=\"Savage\"/>\n\t</root>\n</document>\n";
         var instance = root.run(xmlfile);
         var r = instance.toJSON();
 
@@ -10530,37 +10511,33 @@ describe('example_0', function () {
     });
 });
 
-}).call(this,"/test")
-},{"../index":2,"chai":9,"path":45}],55:[function(require,module,exports){
-(function (__dirname){
+},{"../index":2,"chai":9}],55:[function(require,module,exports){
 var expect = require('chai').expect;
 
-var path = require('path');
 
 var component = require('../index').component;
 var xml = require('../lib/xml');
 
 var testChildComponent = component.define('testChild');
 testChildComponent.fields([
-    ['single_required', '1..1', 'req'],
-    ['single_optional', '0..1', 'opt'],
-    ['multi_required', '0..*', 'multreq'],
-    ['multi_optional', '1..*', 'multopt']
+    ['single_required', '1..1', 'req/text()'],
+    ['single_optional', '0..1', 'opt/text()'],
+    ['multi_required', '0..*', 'multreq/text()'],
+    ['multi_optional', '1..*', 'multopt/text()']
 ]);
 
 var testComponent = component.define('test');
 testComponent.fields([
     ['child_required', '1:1', '//document/reqchild', testChildComponent],
-    ['single_required', '1..1', '//document/req'],
-    ['single_optional', '0..1', '//document/opt']
+    ['single_required', '1..1', '//document/req/text()'],
+    ['single_optional', '0..1', '//document/opt/text()']
 ]);
 
 describe('parser.js', function () {
     var testInstance = null;
 
     before(function (done) {
-        var filepath = path.join(__dirname, 'fixtures/file_5.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<req>error but in</req>\n\t<req>ignored</req>\n\t<opt>allright</opt>\n\t<reqchild>\n\t\t<req>allright</req>\n\t\t<opt>error but in</opt>\n\t\t<opt>ignored</opt>\n\t\t<multreq>allright 0</multreq>\n\t\t<multreq>allright 1</multreq>\n\t\t<multreq>allright 2</multreq>\n\t\t<multopt>allright 0</multopt>\n\t\t<multopt>allright 1</multopt>\n\t\t<multopt>allright 2</multopt>\n\t</reqchild>\n</document>\n";
         var doc = xml.parse(xmlfile);
         testInstance = testComponent.instance();
         testInstance.run(doc);
@@ -10595,12 +10572,9 @@ describe('parser.js', function () {
     });
 });
 
-}).call(this,"/test")
-},{"../index":2,"../lib/xml":1,"chai":9,"path":45}],56:[function(require,module,exports){
-(function (__dirname){
+},{"../index":2,"../lib/xml":1,"chai":9}],56:[function(require,module,exports){
 "use strict";
 
-var path = require('path');
 
 var chai = require('chai');
 
@@ -10616,10 +10590,10 @@ describe('processor', function () {
     it('basic', function () {
         var c = component.define('c');
         c.fields([
-            ["str", "0..1", "string", processor.asString],
+            ["str", "0..1", "string/text()", processor.asString],
             ["attr", "0..1", "stringAttr/@value", processor.asString],
-            ["b", "0..*", "bool", processor.asBoolean],
-            ["f", "0..*", "float", processor.asFloat],
+            ["b", "0..*", "bool/text()", processor.asBoolean],
+            ["f", "0..*", "float/text()", processor.asFloat],
             ["fAttr", "0..1", "floatAttr/@value", processor.asFloat],
             ["t", "0..*", "time/@value", processor.asTimestamp],
             ["p", "0..*", "time/@value", processor.asTimestampResolution],
@@ -10631,8 +10605,7 @@ describe('processor', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_2.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value0</string>\n\t\t<stringAttr value=\"attr0\"/>\n\t\t<bool>true</bool>\n\t\t<bool>false</bool>\n\t\t<bool>other</bool>\n\t\t<float>1.5</float>\n\t\t<float>0.75</float>\n\t\t<floatAttr value=\"5.5\"/>\n\t\t<time value=\"2012\"/>\n\t\t<time value=\"201209\"/>\n\t\t<time value=\"20120915\"/>\n\t\t<time value=\"2012091521\"/>\n\t\t<time value=\"201209152122\"/>\n\t\t<time value=\"201209152122-0400\"/>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
         instance.cleanupTree();
@@ -10661,8 +10634,7 @@ describe('processor', function () {
     });
 });
 
-}).call(this,"/test")
-},{"../index":2,"../lib/xml":1,"chai":9,"path":45}],57:[function(require,module,exports){
+},{"../index":2,"../lib/xml":1,"chai":9}],57:[function(require,module,exports){
 "use strict";
 
 var path = require('path');
