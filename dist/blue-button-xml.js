@@ -144,7 +144,8 @@ var dateArrayZoneToMoment = (function () {
 })();
 
 var dateArrayToMoment = function (dateArray) {
-    var dateArrayAsNumbers = dateArray.map(function (e) {
+    var dateArrayTimeIgnored = dateArray.slice(0, 3);
+    var dateArrayAsNumbers = dateArrayTimeIgnored.map(function (e) {
         return parseInt(e, 10);
     });
     if (dateArrayAsNumbers.length > 1) { // 0 based months
@@ -178,6 +179,9 @@ exports.hl7ToPrecision = (function () {
             return 'utc:' + m.zone();
         } else {
             var n = d.dateArray.length;
+            if (n > 3) {
+                n = 3; // ignore time when no zone
+            }
             return (n < precisions.length) ? precisions[n] : null;
         }
     };

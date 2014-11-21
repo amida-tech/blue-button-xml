@@ -21,24 +21,24 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
         precision: 'day'
     }, {
         hl7: '2012091521',
-        iso8601: "2012-09-15T21:00:00.000Z",
-        precision: 'hour'
+        iso8601: "2012-09-15T00:00:00.000Z",
+        precision: 'day'
     }, {
         hl7: '201209152114',
-        iso8601: "2012-09-15T21:14:00.000Z",
-        precision: 'minute'
+        iso8601: "2012-09-15T00:00:00.000Z",
+        precision: 'day'
     }, {
         hl7: '20120915211442',
-        iso8601: "2012-09-15T21:14:42.000Z",
-        precision: 'second'
+        iso8601: "2012-09-15T00:00:00.000Z",
+        precision: 'day'
     }, {
         hl7: '20120915211442+0200',
         iso8601: "2012-09-15T19:14:42.000Z",
         precision: 'utc:-120'
     }, {
         hl7: '20120915211442.123',
-        iso8601: "2012-09-15T21:14:42.123Z",
-        precision: 'subsecond'
+        iso8601: "2012-09-15T00:00:00.000Z",
+        precision: 'day'
     }, {
         hl7: '20120915211442.123-0500',
         iso8601: "2012-09-16T02:14:42.123Z",
