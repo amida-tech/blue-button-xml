@@ -10189,7 +10189,7 @@ describe('component', function () {
         ]);
 
         var instance = root.instance();
-        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document mlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\"\n\txmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"999.999\"/>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\" xmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"999.999\"/>\n\t\t<string>value</string>\n\t\t<object>\n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
         instance.cleanupTree();
@@ -10503,7 +10503,7 @@ describe('example_0', function () {
             ["data", "0..*", c.xpath(), c]
         ]);
 
-        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document mlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\"\n\txmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>123</id>\n\t\t<name first=\"John\" last=\"Doe\"/>\n\t\t<age>36</age>\n\t\t<child name=\"Mary\"/>\n\t\t<child name=\"David\"/>\n\t</root>\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>126</id>\n\t\t<name first=\"Larry\" last=\"Savoy\"/>\n\t\t<age>32</age>\n\t\t<child name=\"Mark\"/>\n\t\t<child name=\"Savage\"/>\n\t</root>\n</document>\n";
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\" xmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>123</id>\n\t\t<name first=\"John\" last=\"Doe\"/>\n\t\t<age>36</age>\n\t\t<child name=\"Mary\"/>\n\t\t<child name=\"David\"/>\n\t</root>\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>126</id>\n\t\t<name first=\"Larry\" last=\"Savoy\"/>\n\t\t<age>32</age>\n\t\t<child name=\"Mark\"/>\n\t\t<child name=\"Savage\"/>\n\t</root>\n</document>\n";
         var instance = root.run(xmlfile);
         var r = instance.toJSON();
 
