@@ -8,8 +8,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-mocha-phantomjs');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
@@ -17,7 +15,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jshint: {
-            files: ['*.js', './lib/*.js', './browser/lib/*.js'],
+            files: ['*.js', './lib/*.js', './browser/lib/*.js', '*.json'],
             options: {
                 browser: true,
                 smarttabs: true,
@@ -125,45 +123,11 @@ module.exports = function (grunt) {
                 }
             }
         },
-        copy: {
-            main: {
-                files: [{
-                    cwd: 'bower_components/',
-                    expand: true,
-                    src: '**',
-                    dest: 'angulartest/app/lib/'
-                }, {
-                    expand: true,
-                    src: 'dist/*',
-                    dest: 'angulartest/app/lib/'
-                }]
-            }
-        },
-        karma: {
-            e2e: {
-                configFile: 'karma-e2e.conf.js',
-                singleRun: true,
-                browsers: ['Chrome']
-            },
-            unit: {
-                configFile: 'karma.conf.js',
-                singleRun: true,
-                browsers: ['Firefox']
-            }
-        },
         connect: {
             server: {
                 options: {
                     port: 8000,
                     hostname: '127.0.0.1'
-                }
-            },
-            servere2e: {
-                options: {
-                    hostname: 'localhost',
-                    base: './angulartest/app',
-                    directory: './angulartest/app',
-                    port: 8080
                 }
             }
         },
@@ -178,18 +142,14 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask('beautify', ['jsbeautifier:beautify']);
     grunt.registerTask('browser-test', ['browserify:require', 'browserify:tests', 'connect:server', 'mocha_phantomjs']);
-
-    // Default task.
-    grunt.registerTask('default', ['beautify', 'jshint', 'browserify:require', 'copy', 'mochaTest', 'karma:unit']);
-    //Express omitted for travis build.
-    grunt.registerTask('commit', ['jshint', 'mochaTest']);
     grunt.registerTask('mocha', ['mochaTest']);
+    grunt.registerTask('commit', ['jshint', 'mocha']);
+
+    grunt.registerTask('default', ['beautify', 'jshint', 'mocha', 'browser-test']);
+
     grunt.registerTask('timestamp', function () {
         grunt.log.subhead(Date());
     });
-
-    //JS beautifier
-    grunt.registerTask('beautify', ['jsbeautifier:beautify']);
-    grunt.registerTask('e2e', ['browserify:require', 'copy', 'connect:servere2e', 'karma:e2e']);
 };
