@@ -4,7 +4,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-istanbul-coverage');
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-browserify');
@@ -87,18 +86,6 @@ module.exports = function (grunt) {
             // Target-specific LCOV coverage file
             //src: 'coverage-results/extra-results-*.info'
             //},
-        },
-        coverage: {
-            options: {
-                thresholds: {
-                    'statements': 50,
-                    'branches': 25,
-                    'lines': 50,
-                    'functions': 50
-                },
-                dir: 'coverage/',
-                root: '.'
-            }
         },
         browserify: {
             standalone: {
