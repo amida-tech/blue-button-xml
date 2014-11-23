@@ -34,7 +34,7 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
     }, {
         hl7: '20120915211442+0200',
         iso8601: "2012-09-15T19:14:42.000Z",
-        precision: 'utc:-120'
+        precision: 'second'
     }, {
         hl7: '20120915211442.123',
         iso8601: "2012-09-15T00:00:00.000Z",
@@ -42,7 +42,7 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
     }, {
         hl7: '20120915211442.123-0500',
         iso8601: "2012-09-16T02:14:42.123Z",
-        precision: 'utc:300'
+        precision: 'subsecond'
     }];
 
     testCases.forEach(function (testCase) {

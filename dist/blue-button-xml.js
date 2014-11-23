@@ -174,16 +174,11 @@ exports.hl7ToPrecision = (function () {
 
     return function (hl7DateTime) {
         var d = parseHl7(hl7DateTime);
-        if (d.zone) {
-            var m = dateArrayZoneToMoment(d);
-            return 'utc:' + m.zone();
-        } else {
-            var n = d.dateArray.length;
-            if (n > 3) {
-                n = 3; // ignore time when no zone
-            }
-            return (n < precisions.length) ? precisions[n] : null;
+        var n = d.dateArray.length;
+        if ((!d.zone) && (n > 3)) {
+            n = 3; // ignore time when no zone
         }
+        return (n < precisions.length) ? precisions[n] : null;
     };
 })();
 

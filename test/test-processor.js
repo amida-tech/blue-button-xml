@@ -58,6 +58,6 @@ describe('processor', function () {
         expect(r.data.p[4]).to.equal("day");
         expect(r.data.p[5]).to.equal("day");
         expect(r.data.p[6]).to.equal("day");
-        expect(r.data.p[7]).to.equal("utc:-130");
+        expect(r.data.p[7]).to.equal("subsecond");
     });
 });

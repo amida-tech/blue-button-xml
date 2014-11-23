@@ -183,16 +183,11 @@ exports.hl7ToPrecision = (function () {
 
     return function (hl7DateTime) {
         var d = parseHl7(hl7DateTime);
-        if (d.zone) {
-            var m = dateArrayZoneToMoment(d);
-            return 'utc:' + m.zone();
-        } else {
-            var n = d.dateArray.length;
-            if (n > 3) {
-                n = 3; // ignore time when no zone
-            }
-            return (n < precisions.length) ? precisions[n] : null;
+        var n = d.dateArray.length;
+        if ((!d.zone) && (n > 3)) {
+            n = 3; // ignore time when no zone
         }
+        return (n < precisions.length) ? precisions[n] : null;
     };
 })();
 
@@ -12308,7 +12303,7 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
     }, {
         hl7: '20120915211442+0200',
         iso8601: "2012-09-15T19:14:42.000Z",
-        precision: 'utc:-120'
+        precision: 'second'
     }, {
         hl7: '20120915211442.123',
         iso8601: "2012-09-15T00:00:00.000Z",
@@ -12316,7 +12311,7 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
     }, {
         hl7: '20120915211442.123-0500',
         iso8601: "2012-09-16T02:14:42.123Z",
-        precision: 'utc:300'
+        precision: 'subsecond'
     }];
 
     testCases.forEach(function (testCase) {
@@ -13090,7 +13085,7 @@ describe('processor', function () {
         expect(r.data.p[4]).to.equal("day");
         expect(r.data.p[5]).to.equal("day");
         expect(r.data.p[6]).to.equal("day");
-        expect(r.data.p[7]).to.equal("utc:-130");
+        expect(r.data.p[7]).to.equal("subsecond");
     });
 });
 
