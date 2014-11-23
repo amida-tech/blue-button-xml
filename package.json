@@ -27,8 +27,8 @@
     },
     "dependencies": {
         "libxmljs": "^0.12.0",
-        "underscore": "^1.7.0",
-        "xdate": "^0.8.0"
+        "moment": "^2.8.4",
+        "underscore": "^1.7.0"
     },
     "devDependencies": {
         "brfs": "^1.2.0",

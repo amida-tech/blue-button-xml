@@ -14,6 +14,8 @@
 		<time value="20120915"/>
 		<time value="2012091521"/>
 		<time value="201209152122"/>
-		<time value="201209152122-0400"/>
+		<time value="20120915212215"/>
+		<time value="20120915212215.123"/>
+		<time value="20120915212215.123+0210"/>
 	</root>
 </document>
