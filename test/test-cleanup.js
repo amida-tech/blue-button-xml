@@ -1,6 +1,5 @@
 "use strict";
 
-var path = require('path');
 var fs = require('fs');
 var chai = require('chai');
 
@@ -19,18 +18,18 @@ describe('cleanup', function () {
 
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
             ["id", "0..*", "id", id]
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["null_string", "0..1", "nullString"],
+            ["null_string", "0..1", "nullString/text()"],
             ["null_object", "0..1", "nullObject", p],
             ["null_object_array", "0..*", "nullArray", p],
             ["empty_object_array", "0..*", "emptyArray", p],
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -41,8 +40,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_0.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_0.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -86,7 +84,7 @@ describe('cleanup', function () {
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -98,8 +96,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -119,13 +116,13 @@ describe('cleanup', function () {
     it('replaceObject', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -139,8 +136,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -163,13 +159,13 @@ describe('cleanup', function () {
     it('extractAllFields', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -181,8 +177,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -207,13 +202,13 @@ describe('cleanup', function () {
     it('replaceWithField', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "a"],
-            ["b", "0..*", "b"],
+            ["a", "0..1", "a/text()"],
+            ["b", "0..*", "b/text()"],
         ]);
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -225,8 +220,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
@@ -253,7 +247,7 @@ describe('cleanup', function () {
 
         var c = component.define('c');
         c.fields([
-            ["string", "0..1", "string"],
+            ["string", "0..1", "string/text()"],
             ["object", "0..1", "object", p],
             ["array", "0..*", "array", p]
         ]);
@@ -265,8 +259,7 @@ describe('cleanup', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_1.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 

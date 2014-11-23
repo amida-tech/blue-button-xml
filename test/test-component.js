@@ -16,17 +16,17 @@ describe('component', function () {
     it('templateId', function () {
         var p = component.define('p');
         p.fields([
-            ["a", "0..1", "h:a"],
-            ["b", "0..*", "h:b"],
+            ["a", "0..1", "h:a/text()"],
+            ["b", "0..*", "h:b/text()"],
         ]);
 
         var c = component.define('c');
         c.templateRoot('999.999');
         c.fields([
-            ["string", "0..1", "h:string"],
+            ["string", "0..1", "h:string/text()"],
             ["object", "0..1", "h:object", p],
             ["array", "0..*", "h:array", p],
-            ["na", "1..1", "h:na"]
+            ["na", "1..1", "h:na/text()"]
         ]);
 
         var root = component.define("root");
@@ -35,8 +35,7 @@ describe('component', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_3.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_3.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
         instance.cleanupTree();

@@ -1,6 +1,5 @@
 "use strict";
 
-var path = require('path');
 var fs = require('fs');
 var chai = require('chai');
 
@@ -16,10 +15,10 @@ describe('processor', function () {
     it('basic', function () {
         var c = component.define('c');
         c.fields([
-            ["str", "0..1", "string", processor.asString],
+            ["str", "0..1", "string/text()", processor.asString],
             ["attr", "0..1", "stringAttr/@value", processor.asString],
-            ["b", "0..*", "bool", processor.asBoolean],
-            ["f", "0..*", "float", processor.asFloat],
+            ["b", "0..*", "bool/text()", processor.asBoolean],
+            ["f", "0..*", "float/text()", processor.asFloat],
             ["fAttr", "0..1", "floatAttr/@value", processor.asFloat],
             ["t", "0..*", "time/@value", processor.asTimestamp],
             ["p", "0..*", "time/@value", processor.asTimestampResolution],
@@ -31,8 +30,7 @@ describe('processor', function () {
         ]);
 
         var instance = root.instance();
-        var filepath = path.join(__dirname, 'fixtures/file_2.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_2.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
         instance.cleanupTree();
