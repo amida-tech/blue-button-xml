@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document mlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:hl7-org:v3"
-	xmlns:cda="urn:hl7-org:v3" xmlns:sdtc="urn:hl7-org:sdtc">
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:hl7-org:v3" xmlns:cda="urn:hl7-org:v3" xmlns:sdtc="urn:hl7-org:sdtc">
 	<root>
 		<templateId root="999.999"/>
 		<string>value</string>
-		<object> 
+		<object>
 			<a>propobj_a</a>
 			<b>propobj_b0</b>
 			<b>propobj_b1</b>

@@ -1,6 +1,5 @@
 "use strict";
 
-var path = require('path');
 var fs = require('fs');
 var chai = require('chai');
 
@@ -45,8 +44,7 @@ describe('example_0', function () {
             ["data", "0..*", c.xpath(), c]
         ]);
 
-        var filepath = path.join(__dirname, 'fixtures/file_6.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_6.xml', 'utf-8');
         var instance = root.run(xmlfile);
         var r = instance.toJSON();
 

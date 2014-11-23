@@ -1,31 +1,29 @@
 var expect = require('chai').expect;
 var fs = require('fs');
-var path = require('path');
 
 var component = require('../index').component;
 var xml = require('../lib/xml');
 
 var testChildComponent = component.define('testChild');
 testChildComponent.fields([
-    ['single_required', '1..1', 'req'],
-    ['single_optional', '0..1', 'opt'],
-    ['multi_required', '0..*', 'multreq'],
-    ['multi_optional', '1..*', 'multopt']
+    ['single_required', '1..1', 'req/text()'],
+    ['single_optional', '0..1', 'opt/text()'],
+    ['multi_required', '0..*', 'multreq/text()'],
+    ['multi_optional', '1..*', 'multopt/text()']
 ]);
 
 var testComponent = component.define('test');
 testComponent.fields([
     ['child_required', '1:1', '//document/reqchild', testChildComponent],
-    ['single_required', '1..1', '//document/req'],
-    ['single_optional', '0..1', '//document/opt']
+    ['single_required', '1..1', '//document/req/text()'],
+    ['single_optional', '0..1', '//document/opt/text()']
 ]);
 
 describe('parser.js', function () {
     var testInstance = null;
 
     before(function (done) {
-        var filepath = path.join(__dirname, 'fixtures/file_5.xml');
-        var xmlfile = fs.readFileSync(filepath, 'utf-8');
+        var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_5.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         testInstance = testComponent.instance();
         testInstance.run(doc);

@@ -4,18 +4,17 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-istanbul-coverage');
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-mocha-phantomjs');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Project configuration.
     grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
         jshint: {
-            files: ['*.js', './lib/*.js', './browser/lib/*.js'],
+            files: ['*.js', './lib/*.js', './browser/lib/*.js', '*.json'],
             options: {
                 browser: true,
                 smarttabs: true,
@@ -88,76 +87,56 @@ module.exports = function (grunt) {
             //src: 'coverage-results/extra-results-*.info'
             //},
         },
-        coverage: {
-            options: {
-                thresholds: {
-                    'statements': 50,
-                    'branches': 25,
-                    'lines': 50,
-                    'functions': 50
-                },
-                dir: 'coverage/',
-                root: '.'
-            }
-        },
         browserify: {
-            options: {
-                debug: true,
-                alias: "./index.js:blue-button-xml"
+            standalone: {
+                src: ['<%=pkg.main%>'],
+                dest: 'dist/<%=pkg.name%>.standalone.js',
+                options: {
+                    standalone: '<%=pkg.name%>'
+                }
             },
-            dev: {
-                src: 'index.js',
-                dest: 'dist/blue-button-xml.js'
-            }
-        },
-        copy: {
-            main: {
-                files: [{
-                    cwd: 'bower_components/',
-                    expand: true,
-                    src: '**',
-                    dest: 'angulartest/app/lib/'
-                }, {
-                    expand: true,
-                    src: 'dist/*',
-                    dest: 'angulartest/app/lib/'
-                }]
-            }
-        },
-        karma: {
-            e2e: {
-                configFile: 'karma-e2e.conf.js',
-                singleRun: true,
-                browsers: ['Chrome']
+            require: {
+                src: ['<%=pkg.main%>'],
+                dest: 'dist/<%=pkg.name%>.js',
+                options: {
+                    alias: ["<%=pkg.main%>:<%=pkg.name%>"]
+                }
             },
-            unit: {
-                configFile: 'karma.conf.js',
-                singleRun: true,
-                browsers: ['Firefox']
+            tests: {
+                src: ['test/**/*.js'],
+                dest: 'dist/mocha_tests.js',
+                options: {
+                    transform: ['brfs']
+                }
             }
         },
         connect: {
             server: {
                 options: {
-                    hostname: 'localhost',
-                    base: './angulartest/app',
-                    directory: './angulartest/app',
-                    port: 8080
+                    port: 8000,
+                    hostname: '127.0.0.1'
+                }
+            }
+        },
+        'mocha_phantomjs': {
+            all: {
+                options: {
+                    urls: [
+                        'http://127.0.0.1:8000/dist/mocha_runner.html'
+                    ]
                 }
             }
         }
     });
 
-    // Default task.
-    grunt.registerTask('default', ['beautify', 'jshint', 'browserify', 'copy', 'mochaTest', 'karma:unit']);
-    //Express omitted for travis build.
-    grunt.registerTask('commit', ['jshint', 'mochaTest']);
+    grunt.registerTask('beautify', ['jsbeautifier:beautify']);
+    grunt.registerTask('browser-test', ['browserify:require', 'browserify:tests', 'connect:server', 'mocha_phantomjs']);
     grunt.registerTask('mocha', ['mochaTest']);
+    grunt.registerTask('commit', ['jshint', 'mocha']);
+
+    grunt.registerTask('default', ['beautify', 'jshint', 'mocha', 'browser-test']);
+
     grunt.registerTask('timestamp', function () {
         grunt.log.subhead(Date());
     });
-
-    //JS beautifier
-    grunt.registerTask('beautify', ['jsbeautifier:beautify']);
-    grunt.registerTask('e2e', ['browserify', 'copy', 'connect', 'karma:e2e']);
 };
