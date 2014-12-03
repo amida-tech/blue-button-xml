@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<root>
+		<expstartswith>
+			<nod attra="x:val0" attrb="A"/>
+			<nod attra="x:val1" attrb="B"/>
+			<nod attra="y:val2" attrb="C"/>
+			<nod attra="y:val3" attrb="D"/>
+			<nod attra="y:val4"/>
+			<nod attra="y:val5"/>
+		</expstartswith>
+	</root>
+</document>

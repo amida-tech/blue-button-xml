@@ -382,26 +382,24 @@ component.instance = function (parent) {
 };
 
 component.templateRoot = function (roots) {
-    this.templateRoots = [];
-
     if (!Array.isArray(roots)) {
         roots = [roots];
     }
 
-    roots.forEach(function (root, i) {
-        this.templateRoots.push(root);
-    }, this);
+    this._xpath = roots.map(function (r) {
+        return util.format(".//h:templateId[@root='%s']/..", r);
+    }).join(" | ");
 
     return this;
 };
 
 component.xpath = function () {
-    //console.log(this.templateRoots);
-    var ret = this.templateRoots.map(function (r) {
-        return util.format(".//h:templateId[@root='%s']/..", r);
-    }).join(" | ");
+    return this._xpath;
+};
 
-    return ret;
+component.setXPath = function (value) {
+    this._xpath = value;
+    return this._xpath;
 };
 
 component.withNegationStatus = function (t) {
@@ -520,9 +518,7 @@ component.run = function (xmlText) {
     return instance;
 };
 
-component
-    .withNegationStatus(false)
-    .cleanupStep(cleanup.clearNulls);
+component.cleanupStep(cleanup.clearNulls);
 
 module.exports = component;
 
@@ -13092,6 +13088,88 @@ describe('processor', function () {
 },{"../index":2,"../lib/xml":1,"chai":10}],61:[function(require,module,exports){
 "use strict";
 
+
+var chai = require('chai');
+
+var bbxml = require('../index');
+var xml = require('../lib/xml');
+
+var expect = chai.expect;
+
+var component = bbxml.component;
+var cleanup = bbxml.cleanup;
+
+describe('xpath experiments', function () {
+    var doc;
+
+    before(function () {
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<expstartswith>\n\t\t\t<nod attra=\"x:val0\" attrb=\"A\"/>\n\t\t\t<nod attra=\"x:val1\" attrb=\"B\"/>\n\t\t\t<nod attra=\"y:val2\" attrb=\"C\"/>\n\t\t\t<nod attra=\"y:val3\" attrb=\"D\"/>\n\t\t\t<nod attra=\"y:val4\"/>\n\t\t\t<nod attra=\"y:val5\"/>\n\t\t</expstartswith>\n\t</root>\n</document>\n";
+        doc = xml.parse(xmlfile);
+    });
+
+    it('starts-with', function () {
+        var xtype = component.define('xtype');
+        xtype.fields([
+            ['x', '1..1', "@attra"],
+            ['w', '0..1', "@attrb"],
+        ]);
+        xtype.cleanupStep(function () {
+            if (this.js && this.js.x) {
+                this.js.x = this.js.x.substring(2);
+            }
+        });
+        xtype.setXPath("nod[starts-with(@attra, 'x:')]");
+
+        var ytype = component.define('ytype');
+        ytype.fields([
+            ['y', '1..1', '@attra'],
+            ['w', '0..1', '@attrb'],
+        ]);
+        ytype.cleanupStep(function () {
+            if (this.js && this.js.y) {
+                this.js.y = this.js.y.substring(2);
+            }
+        });
+        ytype.setXPath("nod[starts-with(@attra, 'y:')]");
+
+        var c = component.define("c");
+        c.fields([
+            ['xtype', '0..*', xtype.xpath(), xtype],
+            ['ytype', '0..*', ytype.xpath(), ytype],
+        ]);
+
+        var root = component.define("root");
+        root.fields([
+            ["data", "1:1", "//document/root/expstartswith", c]
+        ]);
+
+        var instance = root.instance();
+        instance.run(doc);
+        instance.cleanupTree();
+        var result = instance.toJSON();
+
+        expect(result.data).to.exist;
+        expect(result.data.xtype).to.have.length(2);
+        expect(result.data.xtype[0].x).to.equal('val0');
+        expect(result.data.xtype[0].w).to.equal('A');
+        expect(result.data.xtype[1].x).to.equal('val1');
+        expect(result.data.xtype[1].w).to.equal('B');
+
+        expect(result.data.ytype).to.have.length(4);
+        expect(result.data.ytype[0].y).to.equal('val2');
+        expect(result.data.ytype[0].w).to.equal('C');
+        expect(result.data.ytype[1].y).to.equal('val3');
+        expect(result.data.ytype[1].w).to.equal('D');
+        expect(result.data.ytype[2].y).to.equal('val4');
+        expect(result.data.ytype[2]).to.not.include.keys('w');
+        expect(result.data.ytype[3].y).to.equal('val5');
+        expect(result.data.ytype[3]).to.not.include.keys('w');
+    });
+});
+
+},{"../index":2,"../lib/xml":1,"chai":10}],62:[function(require,module,exports){
+"use strict";
+
 var path = require('path');
 
 var chai = require('chai');
@@ -13127,4 +13205,4 @@ describe('common', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10,"path":48}]},{},[54,55,56,57,58,59,60,61]);
+},{"../index":2,"../lib/xml":1,"chai":10,"path":48}]},{},[54,55,56,57,58,59,60,61,62]);
