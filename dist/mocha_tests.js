@@ -402,11 +402,6 @@ component.setXPath = function (value) {
     return this._xpath;
 };
 
-component.withNegationStatus = function (t) {
-    this._negationStatus = t;
-    return this;
-};
-
 component.fields = function (parsers) {
     this.parsers = [];
     parsers.forEach(function (p, i) {
