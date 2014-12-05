@@ -13087,6 +13087,51 @@ describe('processor', function () {
 var chai = require('chai');
 
 var bbxml = require('../index');
+
+var expect = chai.expect;
+
+var xmlUtil = bbxml.xmlUtil;
+var component = bbxml.component;
+var processor = bbxml.processor;
+
+describe('readme', function () {
+    it('basic', function () {
+        var element = component.define("element");
+        element.fields([
+            ["value", "1..1", "text()", processor.asFloat],
+            ["flag", "0..1", "@ready", processor.asBoolean]
+        ]);
+
+        var compA = component.define("compA");
+        compA.fields([
+            ["name", "0..1", "@name", processor.asString],
+            ["element", "1..*", "element", element]
+        ]);
+
+        var root = component.define("root");
+        root.fields([
+            ["data", "1:1", "//document/root", compA]
+        ]);
+
+        var instance = root.instance();
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root name=\"example\">\n\t\t<element ready=\"true\">82</element>\n\t\t<element ready=\"false\">16</element>\n\t</root>\n</document>\n";
+        var doc = xmlUtil.parse(xmlfile);
+        instance.run(doc);
+        instance.cleanupTree();
+
+        var r = instance.toJSON();
+
+        console.log(JSON.stringify(r, undefined, 2));
+    });
+});
+
+},{"../index":2,"chai":10}],62:[function(require,module,exports){
+"use strict";
+
+
+var chai = require('chai');
+
+var bbxml = require('../index');
 var xml = require('../lib/xml');
 
 var expect = chai.expect;
@@ -13162,7 +13207,7 @@ describe('xpath experiments', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10}],62:[function(require,module,exports){
+},{"../index":2,"../lib/xml":1,"chai":10}],63:[function(require,module,exports){
 "use strict";
 
 var path = require('path');
@@ -13200,4 +13245,4 @@ describe('common', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10,"path":48}]},{},[54,55,56,57,58,59,60,61,62]);
+},{"../index":2,"../lib/xml":1,"chai":10,"path":48}]},{},[54,55,56,57,58,59,60,61,62,63]);

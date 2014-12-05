@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<root name="example">
+		<element ready="true">82</element>
+		<element ready="false">16</element>
+	</root>
+</document>
