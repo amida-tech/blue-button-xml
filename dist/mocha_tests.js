@@ -505,11 +505,11 @@ component.overallParsers = function (sourceKey) {
     return result;
 };
 
-component.run = function (xmlText) {
+component.run = function (xmlText, sourceKey) {
     var instance = this.instance();
     var xmlDoc = xml.parse(xmlText);
-    instance.run(xmlDoc);
-    instance.cleanupTree();
+    instance.run(xmlDoc, sourceKey);
+    instance.cleanupTree(sourceKey);
     return instance;
 };
 
@@ -13095,7 +13095,16 @@ var component = bbxml.component;
 var processor = bbxml.processor;
 
 describe('readme', function () {
-    it('basic', function () {
+    var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root name=\"example\">\n\t\t<element ready=\"true\">82</element>\n\t\t<element ready=\"false\">16</element>\n\t</root>\n</document>\n";
+
+    it('direct', function () {
+        var doc = bbxml.xmlUtil.parse(xmlfile);
+        var nodes = bbxml.xmlUtil.xpath(doc, "//element[@ready='true']/text()");
+        var value = bbxml.processor.asString(nodes[0]);
+        expect(value).to.equal("82");
+    });
+
+    it('infrastructure', function () {
         var element = component.define("element");
         element.fields([
             ["value", "1..1", "text()", processor.asFloat],
@@ -13113,15 +13122,32 @@ describe('readme', function () {
             ["data", "1:1", "//document/root", compA]
         ]);
 
-        var instance = root.instance();
-        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root name=\"example\">\n\t\t<element ready=\"true\">82</element>\n\t\t<element ready=\"false\">16</element>\n\t</root>\n</document>\n";
-        var doc = xmlUtil.parse(xmlfile);
-        instance.run(doc);
-        instance.cleanupTree();
-
+        var instance = root.run(xmlfile);
         var r = instance.toJSON();
+        var e = {
+            "data": {
+                "name": "example",
+                "element": [{
+                    "value": 82,
+                    "flag": true
+                }, {
+                    "value": 16,
+                    "flag": false
+                }]
+            }
+        };
+        expect(r).to.deep.equal(e);
 
-        console.log(JSON.stringify(r, undefined, 2));
+        element.cleanupStep(function () {
+            if (this.js && this.js.flag && this.js.value) {
+                this.js.value = this.js.value + 10
+            }
+        });
+
+        var instance2 = root.run(xmlfile);
+        var r2 = instance2.toJSON();
+        e.data.element[0].value = 92;
+        expect(r2).to.deep.equal(e);
     });
 });
 
