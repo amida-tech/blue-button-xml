@@ -18,9 +18,9 @@ This library is primarily implemented for [node.js](http://nodejs.org) and is av
 
 ## Usage
 
-Require blue-button module
+Require blue-button-xml module
 ``` javascript
-var bbxml = require("blue-button");
+var bbxml = require("blue-button-xml");
 ```
 and load some XML content in an `example.xml`
 ``` xml
