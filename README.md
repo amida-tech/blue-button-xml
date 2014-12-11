@@ -10,9 +10,9 @@ Blue Button XML Parsing Infrastructure
 
 This library provides the following functionality
 * Parse XML documents and find XML elements using [XPath](http://www.w3.org/TR/xpath) via [libxmljs](https://github.com/polotek/libxmljs) (node.js) or [DomParser](http://www.w3schools.com/dom/dom_parser.asp) (browsers).
-* A [XPath](http://www.w3.org/TR/xpath) based formalism to simplify XML to JSON transforms.  
+* Use [XPath](http://www.w3.org/TR/xpath) based formalism to simplify XML to JSON transforms.  
 
-blue-button-xml is primarily designed to support [blue-button](https://github.com/amida-tech/blue-button) parsers to convert CCDA or C32 based XML health data into JSON according to the model in [blue-button-model](https://github.com/amida-tech/blue-button-model). Full XML to JSON transformations such as [xml2s](https://github.com/Leonidas-from-XIV/node-xml2js) are not appropriate for such conversions since not all data in the XML files are clinically significant or useful and often normalization of data is necessary.  blue-button-xml formalism reduces selection and normalization of XML elements
+blue-button-xml is primarily designed to support [blue-button](https://github.com/amida-tech/blue-button) parsers to convert CCDA or C32 based XML health data into JSON according to the model in [blue-button-model](https://github.com/amida-tech/blue-button-model). Full XML to JSON transformations such as [xml2s](https://github.com/Leonidas-from-XIV/node-xml2js) are not appropriate for such conversions since not all data in the XML files are clinically significant or useful and often normalization is necessary.  blue-button-xml formalism simplifies selection and normalization of XML elements into a JSON model.
 
 This library is primarily implemented for [node.js](http://nodejs.org) and is available via [npm](https://www.npmjs.org/doc/cli/npm.html). A browser version is also available via [bower](http://bower.io/). The browser version is created using [browserify](http://browserify.org) and can be used in the same way that you would use it in [node.js](http://nodejs.org).  
 
@@ -22,8 +22,7 @@ Require blue-button module
 ``` javascript
 var bbxml = require("blue-button");
 ```
-and load XML content in an `example.xml`
-From these component definitions, XML content in an example file `example.xml`
+and load some XML content in an `example.xml`
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
@@ -34,7 +33,7 @@ From these component definitions, XML content in an example file `example.xml`
 </document>
 ```
 ``` javascript
-var data = var xmlfile = fs.readFileSync('example'.xml', 'utf-8');
+var data = fs.readFileSync('example.xml', 'utf-8');
 ```
 
 ### XML Utilities
@@ -53,7 +52,7 @@ var value = bbxml.processor.asString(nodes[0]);
 console.log(value); // 82
 ```
 
-### XPath based XML to JSON Conversion Infrastructure
+### XML to JSON Conversion Infrastructure
 
 Define hieararchical parsers, JSON keys, JSON values and cardinality using `component` and `processor` 
 ``` javascript
@@ -108,12 +107,12 @@ Transform to verify normalization
 ``` javascript
 var instance2 = root.run(xmlfile);
 var r2 = instance2.toJSON();
-console.log(r2.data.elenet[0].value); // 92
+console.log(r2.data.element[0].value); // 92
 ```
 
 ## Component Fields
 
-Component `fields` method is used specify a JSON properties and accepts an array.  Each element is itself is an array with a maximum lenght of 5
+Component `fields` method is used specify JSON properties and accepts an array.  Each element is itself an array with a maximum lenght of 5
 
 * Index 0: This specifies the JSON key where XML data will be stored.  Multiple hieararcy keys such as `propa.prob` is accepted.
 * Index 1: This specifies the cardinality.  `1..1`, `0..`, `1..*`, and `0..*` respectively specify required object or value, optional object or value, required array of objects or values, and optional array of objects and values.  `*` can be replaced with a maximum value.  Cardinality errors are listed in `errors` property of results.
@@ -136,9 +135,15 @@ compA.cleanupStep(compAStep2);
 where 'compAStep1' and 'compAStep2' are functions that can remove or modify existing fields or add new fields
 after the primary parsing step.  Normalization steps are executed in order.
 
+`this.js` is available inside the normalization functions as the result before normalization.  `this.js` includes all the JSON keys and values defined for the component and normalization is done by changing `this.js`.
+
+By default all `null` and `undefined` values are removed as the first normalization step.  Currently this normalization cannot be removed.
+
+`bbxml.cleanup` provides the following common normalizations: `renameField`, `replaceWithObject`, `extractAllFields`, `replaceWithField`, sn `removeField`.
+
 ## Extending
 
-An existing component can be extended to create a new component with includes all the fields and 
+An existing component can be extended to create a new component that includes all the fields and 
 cleanup steps of the existing component
 ``` javascript
 var compB = compA.define("compB");
@@ -165,7 +170,7 @@ compA.fields([
 ```
 And if 'vendor' key is passed in the run step from the API, blue-button-xml uses the vendor specific "name" and "vendorField"
 ``` javascript
-instance.run(doc, 'vendor');
+root.run(doc, 'vendor');
 ```
 
 ## Vendor Specific Normalization
