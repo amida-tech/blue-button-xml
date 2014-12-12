@@ -1,6 +1,6 @@
 {
     "name": "blue-button-xml",
-    "version": "1.3.0-beta.9",
+    "version": "1.3.0",
     "main": "dist/blue-button-xml",
     "license": "Apache-2.0",
     "ignore": ["**/*", "!dist/*", "!bower.json", "!LICENSE"]
