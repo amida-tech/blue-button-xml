@@ -81,15 +81,6 @@ exports.xpath = (function () {
 },{}],2:[function(require,module,exports){
 "use strict";
 
-exports.component = require("./lib/component");
-exports.cleanup = require("./lib/cleanup");
-exports.processor = require("./lib/processor");
-exports.common = require("./lib/common");
-exports.xmlUtil = require("./lib/xml");
-
-},{"./lib/cleanup":4,"./lib/common":5,"./lib/component":6,"./lib/processor":9,"./lib/xml":1}],3:[function(require,module,exports){
-"use strict";
-
 var moment = require("moment");
 
 var splitZoneMilliseconds = function (hl7DateTime) {
@@ -191,7 +182,7 @@ exports.hl7ToPrecision = (function () {
     };
 })();
 
-},{"moment":15}],4:[function(require,module,exports){
+},{"moment":14}],3:[function(require,module,exports){
 "use strict";
 
 var _ = require("underscore");
@@ -291,7 +282,7 @@ cleanup.removeField = function (field) {
     return r;
 };
 
-},{"underscore":16}],5:[function(require,module,exports){
+},{"underscore":15}],4:[function(require,module,exports){
 "use strict";
 
 var isPlainObject = exports.isPlainObject = function (o) {
@@ -338,7 +329,7 @@ exports.exists = function (obj) {
     return obj !== undefined && obj !== null;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 var util = require("util");
@@ -517,7 +508,7 @@ component.cleanupStep(cleanup.clearNulls);
 
 module.exports = component;
 
-},{"./cleanup":4,"./common":5,"./componentInstance":7,"./parser":8,"./xml":1,"util":14}],7:[function(require,module,exports){
+},{"./cleanup":3,"./common":4,"./componentInstance":6,"./parser":7,"./xml":1,"util":13}],6:[function(require,module,exports){
 "use strict";
 
 var assert = require("assert");
@@ -602,7 +593,7 @@ componentInstance.toJSON = function () {
 
 module.exports = componentInstance;
 
-},{"./common":5,"assert":10}],8:[function(require,module,exports){
+},{"./common":4,"assert":9}],7:[function(require,module,exports){
 "use strict";
 
 var processor = require("./processor");
@@ -673,7 +664,7 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
 
 module.exports = Parser;
 
-},{"./processor":9,"./xml":1,"util":14}],9:[function(require,module,exports){
+},{"./processor":8,"./xml":1,"util":13}],8:[function(require,module,exports){
 "use strict";
 
 var xpath = require("./common").xpath;
@@ -706,7 +697,7 @@ var asTimestampResolution = processor.asTimestampResolution = function (v) {
     return bbUtil.hl7ToPrecision(t);
 };
 
-},{"./bbUtil":3,"./common":5,"./xml":1}],10:[function(require,module,exports){
+},{"./bbUtil":2,"./common":4,"./xml":1}],9:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -1068,7 +1059,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":14}],11:[function(require,module,exports){
+},{"util/":13}],10:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1093,7 +1084,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1181,14 +1172,14 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1778,7 +1769,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":13,"_process":12,"inherits":11}],15:[function(require,module,exports){
+},{"./support/isBuffer":12,"_process":11,"inherits":10}],14:[function(require,module,exports){
 (function (global){
 //! moment.js
 //! version : 2.8.4
@@ -4718,7 +4709,7 @@ function hasOwnProperty(obj, prop) {
 }).call(this);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -6135,4 +6126,13 @@ function hasOwnProperty(obj, prop) {
   }
 }.call(this));
 
-},{}]},{},[2]);
+},{}],"blue-button-xml":[function(require,module,exports){
+"use strict";
+
+exports.component = require("./lib/component");
+exports.cleanup = require("./lib/cleanup");
+exports.processor = require("./lib/processor");
+exports.common = require("./lib/common");
+exports.xmlUtil = require("./lib/xml");
+
+},{"./lib/cleanup":3,"./lib/common":4,"./lib/component":5,"./lib/processor":8,"./lib/xml":1}]},{},["blue-button-xml"]);
