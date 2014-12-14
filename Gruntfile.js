@@ -99,7 +99,7 @@ module.exports = function (grunt) {
                 src: ['<%=pkg.main%>'],
                 dest: 'dist/<%=pkg.name%>.js',
                 options: {
-                    alias: ["<%=pkg.main%>:<%=pkg.name%>"]
+                    alias: [__dirname + "/index.js:<%=pkg.name%>"]
                 }
             },
             tests: {
