@@ -9,5 +9,19 @@
 			<nod attra="y:val4"/>
 			<nod attra="y:val5"/>
 		</expstartswith>
+		<parentcondition>
+			<c>
+				<templateId root="1"/>
+				<value>c0</value>
+			</c>
+			<c negationInd="true">
+				<templateId root="1"/>
+				<value>c1</value>
+			</c>
+			<c negationInd="false">
+				<templateId root="1"/>
+				<value>c2</value>
+			</c>
+		</parentcondition>
 	</root>
 </document>

@@ -13170,7 +13170,7 @@ describe('xpath experiments', function () {
     var doc;
 
     before(function () {
-        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<expstartswith>\n\t\t\t<nod attra=\"x:val0\" attrb=\"A\"/>\n\t\t\t<nod attra=\"x:val1\" attrb=\"B\"/>\n\t\t\t<nod attra=\"y:val2\" attrb=\"C\"/>\n\t\t\t<nod attra=\"y:val3\" attrb=\"D\"/>\n\t\t\t<nod attra=\"y:val4\"/>\n\t\t\t<nod attra=\"y:val5\"/>\n\t\t</expstartswith>\n\t</root>\n</document>\n";
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<expstartswith>\n\t\t\t<nod attra=\"x:val0\" attrb=\"A\"/>\n\t\t\t<nod attra=\"x:val1\" attrb=\"B\"/>\n\t\t\t<nod attra=\"y:val2\" attrb=\"C\"/>\n\t\t\t<nod attra=\"y:val3\" attrb=\"D\"/>\n\t\t\t<nod attra=\"y:val4\"/>\n\t\t\t<nod attra=\"y:val5\"/>\n\t\t</expstartswith>\n\t\t<parentcondition>\n\t\t\t<c>\n\t\t\t\t<templateId root=\"1\"/>\n\t\t\t\t<value>c0</value>\n\t\t\t</c>\n\t\t\t<c negationInd=\"true\">\n\t\t\t\t<templateId root=\"1\"/>\n\t\t\t\t<value>c1</value>\n\t\t\t</c>\n\t\t\t<c negationInd=\"false\">\n\t\t\t\t<templateId root=\"1\"/>\n\t\t\t\t<value>c2</value>\n\t\t\t</c>\n\t\t</parentcondition>\n\t</root>\n</document>\n";
         doc = xml.parse(xmlfile);
     });
 
@@ -13231,6 +13231,27 @@ describe('xpath experiments', function () {
         expect(result.data.ytype[2]).to.not.include.keys('w');
         expect(result.data.ytype[3].y).to.equal('val5');
         expect(result.data.ytype[3]).to.not.include.keys('w');
+    });
+
+    it('condition on parent', function () {
+        var c = component.define('c');
+        var xpath = ".//templateId[@root='1' and not(../@negationInd='true')]/../value/text()";
+        c.fields([
+            ['c', '0..*', xpath]
+        ]);
+
+        var root = component.define("root");
+        root.fields([
+            ["data", "1:1", "//document/root/parentcondition", c]
+        ]);
+
+        var instance = root.instance();
+        instance.run(doc);
+        instance.cleanupTree();
+        var result = instance.toJSON();
+
+        expect(result.data).to.exist;
+        expect(result.data.c).to.deep.equal(['c0', 'c2']);
     });
 });
 

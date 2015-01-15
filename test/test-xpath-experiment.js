@@ -77,4 +77,25 @@ describe('xpath experiments', function () {
         expect(result.data.ytype[3].y).to.equal('val5');
         expect(result.data.ytype[3]).to.not.include.keys('w');
     });
+
+    it('condition on parent', function () {
+        var c = component.define('c');
+        var xpath = ".//templateId[@root='1' and not(../@negationInd='true')]/../value/text()";
+        c.fields([
+            ['c', '0..*', xpath]
+        ]);
+
+        var root = component.define("root");
+        root.fields([
+            ["data", "1:1", "//document/root/parentcondition", c]
+        ]);
+
+        var instance = root.instance();
+        instance.run(doc);
+        instance.cleanupTree();
+        var result = instance.toJSON();
+
+        expect(result.data).to.exist;
+        expect(result.data.c).to.deep.equal(['c0', 'c2']);
+    });
 });
