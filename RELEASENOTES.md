@@ -1,7 +1,8 @@
 # blue-button-xml.js Release Notes
 
-# v.1.4.0 - TBD
+# v.1.5.0 - 
 - More unit tests
+- Dependeny package library updates
 
 # v.1.3.0 - December 12, 2014
 - Seperated from blue-button repository.
