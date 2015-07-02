@@ -164,6 +164,9 @@ var dateArrayToMoment = function (dateArray) {
 };
 
 exports.hl7ToISO = function (hl7DateTime) {
+    if (!hl7DateTime) {
+        return null;
+    }
     var d = parseHl7(hl7DateTime);
     var m = d.zone ? dateArrayZoneToMoment(d) : dateArrayToMoment(d.dateArray);
     return m.toISOString();
@@ -182,6 +185,9 @@ exports.hl7ToPrecision = (function () {
     ];
 
     return function (hl7DateTime) {
+        if (!hl7DateTime) {
+            return null;
+        }
         var d = parseHl7(hl7DateTime);
         var n = d.dateArray.length;
         if ((!d.zone) && (n > 3)) {
@@ -24348,6 +24354,10 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
         hl7: '20120915211442.123-0500',
         iso8601: "2012-09-16T02:14:42.123Z",
         precision: 'subsecond'
+    }, {
+        hl7: '',
+        iso8601: null,
+        precision: null
     }];
 
     testCases.forEach(function (testCase) {
@@ -25085,6 +25095,8 @@ describe('processor', function () {
             ["fAttr", "0..1", "floatAttr/@value", processor.asFloat],
             ["t", "0..*", "time/@value", processor.asTimestamp],
             ["p", "0..*", "time/@value", processor.asTimestampResolution],
+            ["ts", "0..1", "timesingle/@value", processor.asTimestamp],
+            ["ps", "0..1", "timesingle/@value", processor.asTimestampResolution],
         ]);
 
         var root = component.define("root");
@@ -25093,7 +25105,7 @@ describe('processor', function () {
         ]);
 
         var instance = root.instance();
-        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value0</string>\n\t\t<stringAttr value=\"attr0\"/>\n\t\t<bool>true</bool>\n\t\t<bool>false</bool>\n\t\t<bool>other</bool>\n\t\t<float>1.5</float>\n\t\t<float>0.75</float>\n\t\t<floatAttr value=\"5.5\"/>\n\t\t<time value=\"2012\"/>\n\t\t<time value=\"201209\"/>\n\t\t<time value=\"20120915\"/>\n\t\t<time value=\"2012091521\"/>\n\t\t<time value=\"201209152122\"/>\n\t\t<time value=\"20120915212215\"/>\n\t\t<time value=\"20120915212215.123\"/>\n\t\t<time value=\"20120915212215.123+0210\"/>\n\t</root>\n</document>\n";
+        var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value0</string>\n\t\t<stringAttr value=\"attr0\"/>\n\t\t<bool>true</bool>\n\t\t<bool>false</bool>\n\t\t<bool>other</bool>\n\t\t<float>1.5</float>\n\t\t<float>0.75</float>\n\t\t<floatAttr value=\"5.5\"/>\n\t\t<time value=\"2012\"/>\n\t\t<time value=\"201209\"/>\n\t\t<time value=\"20120915\"/>\n\t\t<time value=\"2012091521\"/>\n\t\t<time value=\"201209152122\"/>\n\t\t<time value=\"20120915212215\"/>\n\t\t<time value=\"20120915212215.123\"/>\n\t\t<time value=\"20120915212215.123+0210\"/>\n\t\t<timesingle value=\"\"/>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
         instance.run(doc);
         instance.cleanupTree();
@@ -25122,6 +25134,8 @@ describe('processor', function () {
         expect(r.data.p[5]).to.equal("day");
         expect(r.data.p[6]).to.equal("day");
         expect(r.data.p[7]).to.equal("subsecond");
+        expect(r.data.ts).to.equal(undefined);
+        expect(r.data.ps).to.equal(undefined);
     });
 });
 
