@@ -155,7 +155,7 @@ var dateArrayToMoment = function (dateArray) {
 };
 
 exports.hl7ToISO = function (hl7DateTime) {
-    if (!hl7DateTime) {
+    if ((!hl7DateTime) || (hl7DateTime.length < 4)) {
         return null;
     }
     var d = parseHl7(hl7DateTime);
@@ -176,7 +176,7 @@ exports.hl7ToPrecision = (function () {
     ];
 
     return function (hl7DateTime) {
-        if (!hl7DateTime) {
+        if ((!hl7DateTime) || (hl7DateTime.length < 4)) {
             return null;
         }
         var d = parseHl7(hl7DateTime);

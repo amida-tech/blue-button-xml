@@ -47,6 +47,10 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
         hl7: '',
         iso8601: null,
         precision: null
+    }, {
+        hl7: '0',
+        iso8601: null,
+        precision: null
     }];
 
     testCases.forEach(function (testCase) {
