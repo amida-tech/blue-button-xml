@@ -17,5 +17,7 @@
 		<time value="20120915212215"/>
 		<time value="20120915212215.123"/>
 		<time value="20120915212215.123+0210"/>
+		<timesingle value=""/>
+		<timezero value="0"/>
 	</root>
 </document>

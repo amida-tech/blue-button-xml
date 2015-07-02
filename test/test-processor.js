@@ -22,6 +22,10 @@ describe('processor', function () {
             ["fAttr", "0..1", "floatAttr/@value", processor.asFloat],
             ["t", "0..*", "time/@value", processor.asTimestamp],
             ["p", "0..*", "time/@value", processor.asTimestampResolution],
+            ["ts", "0..1", "timesingle/@value", processor.asTimestamp],
+            ["ps", "0..1", "timesingle/@value", processor.asTimestampResolution],
+            ["tzero", "0..1", "timezero/@value", processor.asTimestamp],
+            ["pzero", "0..1", "timezero/@value", processor.asTimestampResolution],
         ]);
 
         var root = component.define("root");
@@ -59,5 +63,9 @@ describe('processor', function () {
         expect(r.data.p[5]).to.equal("day");
         expect(r.data.p[6]).to.equal("day");
         expect(r.data.p[7]).to.equal("subsecond");
+        expect(r.data.ts).to.equal(undefined);
+        expect(r.data.ps).to.equal(undefined);
+        expect(r.data.tzero).to.equal(undefined);
+        expect(r.data.pzero).to.equal(undefined);
     });
 });
