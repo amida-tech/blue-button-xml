@@ -36,9 +36,7 @@ describe('processor', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_2.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-
-        var r = instance.toJSON();
+        var r = instance.run(doc);
 
         expect(r.data.str).to.equal('value0');
         expect(r.data.attr).to.equal('attr0');

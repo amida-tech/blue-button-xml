@@ -37,8 +37,7 @@ describe('component', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_3.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
         expect(ra.data).to.exist;
         expect(ra.data.object).to.exits;
         expect(ra.data.string).to.exits;

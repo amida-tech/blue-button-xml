@@ -20,19 +20,19 @@ testComponent.fields([
 ]);
 
 describe('parser.js', function () {
-    var testInstance = null;
+    var result = null;
+    var errors = null;
 
     before(function (done) {
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_5.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        testInstance = testComponent.instance();
-        testInstance.run(doc);
+        var testInstance = testComponent.instance();
+        result = testInstance.run(doc);
+        errors = testInstance.errors;
         done();
     });
 
     it('check valid data', function (done) {
-        expect(testInstance).to.exist;
-        var result = testInstance.toJSON();
         expect(result).to.exist;
         expect(result.single_required).to.equal('error but in');
         expect(result.single_optional).to.equal('allright');
@@ -51,9 +51,9 @@ describe('parser.js', function () {
     });
 
     it('check errors', function (done) {
-        expect(testInstance.errors).to.have.length(2);
-        expect(testInstance.errors[0]).to.have.string('cardinality error:');
-        expect(testInstance.errors[1]).to.have.string('cardinality error:');
+        expect(errors).to.have.length(2);
+        expect(errors[0]).to.have.string('cardinality error:');
+        expect(errors[1]).to.have.string('cardinality error:');
         done();
     });
 });

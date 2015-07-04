@@ -15,8 +15,7 @@ describe('componentInstance.js', function () {
         var r = c.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_4.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        r.run(doc);
-        var f = r.toJSON();
+        var f = r.run(doc);
         expect(f).to.exist;
         expect(f.a).to.equal('valuea');
         expect(f.x).to.exist;

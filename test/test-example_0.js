@@ -45,8 +45,7 @@ describe('example_0', function () {
         ]);
 
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_6.xml', 'utf-8');
-        var instance = root.run(xmlfile);
-        var r = instance.toJSON();
+        var r = root.run(xmlfile);
 
         expect(r).to.deep.equal(expected);
     });

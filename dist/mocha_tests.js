@@ -205,53 +205,57 @@ var _ = require("lodash");
 var cleanup = module.exports = {};
 
 cleanup.renameField = function (oldn, newn) {
-    var f = function () {
-        if (this.js && this.js[oldn]) {
-            this.js[newn] = this.js[oldn];
-            delete this.js[oldn];
+    var f = function (value) {
+        if (value && value[oldn]) {
+            value[newn] = value[oldn];
+            delete value[oldn];
         }
+        return value;
     };
     return f;
 };
 
-cleanup.replaceWithObject = function (field, value) {
-    var f = function () {
-        if (this.js && this.js[field]) {
-            this.js[field] = value;
+cleanup.replaceWithObject = function (field, newValue) {
+    var f = function (value) {
+        if (value && value[field]) {
+            value[field] = newValue;
         }
+        return value;
     };
     return f;
 };
 
 cleanup.extractAllFields = function (field) { // We need cleanup function to become objects
-    var r = function () {
-        var tmp = this.js && this.js[field];
+    var r = function (value) {
+        var tmp = value && value[field];
         if (tmp) { //HACK: added this if
-            delete this.js[field];
-            if (tmp.js) {
-                Object.keys(tmp.js).forEach(function (m) {
-                    if (this.js[m] === undefined) {
-                        this.js[m] = tmp.js[m];
+            delete value[field];
+            if (tmp) {
+                Object.keys(tmp).forEach(function (m) {
+                    if (value[m] === undefined) {
+                        value[m] = tmp[m];
                     }
                 }, this);
             }
         }
+        return value;
     };
     return r;
 };
 
 cleanup.replaceWithField = function (field) {
-    var r = function () {
-        this.js = this.js && this.js[field];
+    var r = function (value) {
+        return value && value[field];
     };
     return r;
 };
 
 cleanup.removeField = function (field) {
-    var r = function () {
-        if (this.js) {
-            delete this.js[field];
+    var r = function (value) {
+        if (value) {
+            delete value[field];
         }
+        return value;
     };
     return r;
 };
@@ -269,36 +273,6 @@ var isPlainObject = exports.isPlainObject = function (o) {
     return (['object'].indexOf(typeof o) !== -1);
 };
 
-exports.deepForEach = function deepForEach(obj, fns) {
-    var inobj = obj;
-    fns = fns || {};
-
-    if (fns.pre) {
-        obj = fns.pre(obj);
-    }
-
-    var ret;
-    if (obj === null) {
-        ret = null;
-    } else if (Array.isArray(obj)) {
-        ret = obj.map(function (elt) {
-            return deepForEach(elt, fns);
-        });
-    } else if (isPlainObject(obj)) {
-        ret = {};
-        Object.keys(obj).forEach(function (k) {
-            ret[k] = deepForEach(obj[k], fns);
-        });
-    } else {
-        ret = obj;
-    }
-
-    if (fns.post) {
-        ret = fns.post(inobj, ret);
-    }
-    return ret;
-};
-
 exports.exists = function (obj) {
     return obj !== undefined && obj !== null;
 };
@@ -307,14 +281,11 @@ exports.exists = function (obj) {
 "use strict";
 
 var util = require("util");
-var common = require("./common");
 var cleanup = require("./cleanup");
 var componentInstance = require("./componentInstance");
 var xml = require('./xml');
 
 var Parser = require("./parser");
-
-var deepForEach = common.deepForEach;
 
 var component = {};
 
@@ -473,20 +444,16 @@ component.overallParsers = function (sourceKey) {
 component.run = function (xmlText, sourceKey) {
     var instance = this.instance();
     var xmlDoc = xml.parse(xmlText);
-    instance.run(xmlDoc, sourceKey);
-    return instance;
+    return instance.run(xmlDoc, sourceKey);
 };
 
 module.exports = component;
 
-},{"./cleanup":4,"./common":5,"./componentInstance":7,"./parser":8,"./xml":1,"util":53}],7:[function(require,module,exports){
+},{"./cleanup":4,"./componentInstance":7,"./parser":8,"./xml":1,"util":53}],7:[function(require,module,exports){
 "use strict";
 
 var assert = require("assert");
-var common = require("./common");
 var _ = require('lodash');
-
-var deepForEach = common.deepForEach;
 
 var componentInstance = {};
 
@@ -503,12 +470,12 @@ componentInstance.pathToTop = function () {
     return chainUp(this);
 };
 
-componentInstance.cleanup = function (sourceKey) {
+componentInstance.cleanup = function (value, sourceKey) {
     var steps = this.component.overallCleanupSteps(sourceKey);
     steps.forEach(function (stepObj) {
-        stepObj.value.call(this);
+        value = stepObj.value.call(this, value);
     }, this);
-    return this;
+    return value;
 };
 
 componentInstance.run = function (node, sourceKey) {
@@ -525,26 +492,17 @@ componentInstance.run = function (node, sourceKey) {
             }
         }, this);
     }
-    this.cleanup(sourceKey);
-    if ((typeof this.js === 'object') && _.isEmpty(this.js)) {
-        delete this.js;
+    var value = this.cleanup(this.js, sourceKey);
+    if ((typeof value === 'object') && _.isEmpty(value)) {
+        return null;
+    } else {
+        return value;
     }
-};
-
-componentInstance.toJSON = function () {
-    return deepForEach(this, {
-        pre: function (o) {
-            if (componentInstance.isPrototypeOf(o)) {
-                return o.js;
-            }
-            return o;
-        }
-    });
 };
 
 module.exports = componentInstance;
 
-},{"./common":5,"assert":44,"lodash":54}],8:[function(require,module,exports){
+},{"assert":44,"lodash":54}],8:[function(require,module,exports){
 "use strict";
 
 var processor = require("./processor");
@@ -580,17 +538,16 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
         if (component && component.componentName) {
             var instance = component.instance(parentInstance);
             if (component.hasParsers()) {
-                instance.run(match, sourceKey);
+                return instance.run(match, sourceKey);
             } else {
-                instance.run(processor.asString(match), sourceKey);
+                return instance.run(processor.asString(match), sourceKey);
             }
-            return instance.js ? instance : null;
         } else if (component) {
             return component(match);
         } else {
             return processor.asString(match);
         }
-    });
+    }, this);
     jsVal = jsVal.reduce(function (r, v) {
         if ((v !== null) && (v !== undefined)) {
             if ((typeof v !== 'object') || !_.isEmpty(v)) {
@@ -627,7 +584,6 @@ module.exports = Parser;
 },{"./processor":9,"./xml":1,"lodash":54,"util":53}],9:[function(require,module,exports){
 "use strict";
 
-var xpath = require("./common").xpath;
 var xmlutil = require("./xml");
 
 var bbUtil = require("./bbUtil");
@@ -657,7 +613,7 @@ var asTimestampResolution = processor.asTimestampResolution = function (v) {
     return bbUtil.hl7ToPrecision(t);
 };
 
-},{"./bbUtil":3,"./common":5,"./xml":1}],10:[function(require,module,exports){
+},{"./bbUtil":3,"./xml":1}],10:[function(require,module,exports){
 module.exports = require('./lib/chai');
 
 },{"./lib/chai":11}],11:[function(require,module,exports){
@@ -24336,7 +24292,10 @@ var cleanup = bbxml.cleanup;
 describe('cleanup', function () {
     it('clearNulls', function () {
         var id = component.define('id');
-        id.fields[["ida", "1..1", "@ida"], ["idb", "0..1", "@idb"]];
+        id.fields([
+            ["ida", "1..1", "@ida"],
+            ["idb", "0..1", "@idb"]
+        ]);
 
         var p = component.define('p');
         p.fields([
@@ -24364,8 +24323,7 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<emptyArray />\n\t\t<emptyArray>\n\t\t\t<b/>\n\t\t\t<b/>\n\t\t</emptyArray>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t\t<id na=\"na\"/>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
 
         expect(ra.data).to.exist;
         expect(ra.data).to.not.have.property('null_string');
@@ -24408,11 +24366,10 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
+        var ra = instance.run(doc);
 
-        var ra = instance.toJSON();
         expect(ra.data).to.exist;
-        expect(ra.data.object).not.to.exits;
+        expect(ra.data.object).not.to.eits;
         expect(ra.data.tcejbo).to.exist;
     });
 
@@ -24441,9 +24398,8 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
+        var ra = instance.run(doc);
 
-        var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data.object).not.equal({
             c: "propobj_c"
@@ -24473,9 +24429,8 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
+        var ra = instance.run(doc);
 
-        var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data).not.to.have.property('object');
         expect(ra.data.a).to.equal('propobj_a');
@@ -24505,9 +24460,7 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
 
         expect(ra.data).to.exist;
         expect(ra.data).to.equal('value');
@@ -24536,9 +24489,7 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value</string>\n\t\t<object> \n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
 
         expect(ra.data).to.exist;
         expect(ra.data).not.to.have.property('object');
@@ -24585,8 +24536,7 @@ describe('component', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\" xmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"999.999\"/>\n\t\t<string>value</string>\n\t\t<object>\n\t\t\t<a>propobj_a</a>\n\t\t\t<b>propobj_b0</b>\n\t\t\t<b>propobj_b1</b>\n\t\t</object>\n\t\t<array>\n\t\t\t<a>proparr0_a</a>\n\t\t\t<b>proparr0_b0</b>\n\t\t\t<b>proparr0_b1</b>\n\t\t</array>\n\t\t<array>\n\t\t\t<a>proparr1_a</a>\n\t\t\t<b>proparr1_b0</b>\n\t\t\t<b>proparr1_b1</b>\n\t\t</array>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
         expect(ra.data).to.exist;
         expect(ra.data.object).to.exits;
         expect(ra.data.string).to.exits;
@@ -24837,8 +24787,7 @@ describe('componentInstance.js', function () {
         var r = c.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<a>valuea</a>\n\t<p>\n\t\t<b>valueb</b>\n\t</p>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        r.run(doc);
-        var f = r.toJSON();
+        var f = r.run(doc);
         expect(f).to.exist;
         expect(f.a).to.equal('valuea');
         expect(f.x).to.exist;
@@ -24896,8 +24845,7 @@ describe('example_0', function () {
         ]);
 
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:hl7-org:v3\" xmlns:cda=\"urn:hl7-org:v3\" xmlns:sdtc=\"urn:hl7-org:sdtc\">\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>123</id>\n\t\t<name first=\"John\" last=\"Doe\"/>\n\t\t<age>36</age>\n\t\t<child name=\"Mary\"/>\n\t\t<child name=\"David\"/>\n\t</root>\n\t<root>\n\t\t<templateId root=\"person\"/>\n\t\t<id>126</id>\n\t\t<name first=\"Larry\" last=\"Savoy\"/>\n\t\t<age>32</age>\n\t\t<child name=\"Mark\"/>\n\t\t<child name=\"Savage\"/>\n\t</root>\n</document>\n";
-        var instance = root.run(xmlfile);
-        var r = instance.toJSON();
+        var r = root.run(xmlfile);
 
         expect(r).to.deep.equal(expected);
     });
@@ -24926,19 +24874,19 @@ testComponent.fields([
 ]);
 
 describe('parser.js', function () {
-    var testInstance = null;
+    var result = null;
+    var errors = null;
 
     before(function (done) {
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<req>error but in</req>\n\t<req>ignored</req>\n\t<opt>allright</opt>\n\t<reqchild>\n\t\t<req>allright</req>\n\t\t<opt>error but in</opt>\n\t\t<opt>ignored</opt>\n\t\t<multreq>allright 0</multreq>\n\t\t<multreq>allright 1</multreq>\n\t\t<multreq>allright 2</multreq>\n\t\t<multopt>allright 0</multopt>\n\t\t<multopt>allright 1</multopt>\n\t\t<multopt>allright 2</multopt>\n\t</reqchild>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        testInstance = testComponent.instance();
-        testInstance.run(doc);
+        var testInstance = testComponent.instance();
+        result = testInstance.run(doc);
+        errors = testInstance.errors;
         done();
     });
 
     it('check valid data', function (done) {
-        expect(testInstance).to.exist;
-        var result = testInstance.toJSON();
         expect(result).to.exist;
         expect(result.single_required).to.equal('error but in');
         expect(result.single_optional).to.equal('allright');
@@ -24957,9 +24905,9 @@ describe('parser.js', function () {
     });
 
     it('check errors', function (done) {
-        expect(testInstance.errors).to.have.length(2);
-        expect(testInstance.errors[0]).to.have.string('cardinality error:');
-        expect(testInstance.errors[1]).to.have.string('cardinality error:');
+        expect(errors).to.have.length(2);
+        expect(errors[0]).to.have.string('cardinality error:');
+        expect(errors[1]).to.have.string('cardinality error:');
         done();
     });
 });
@@ -25003,9 +24951,7 @@ describe('processor', function () {
         var instance = root.instance();
         var xmlfile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<document>\n\t<root>\n\t\t<string>value0</string>\n\t\t<stringAttr value=\"attr0\"/>\n\t\t<bool>true</bool>\n\t\t<bool>false</bool>\n\t\t<bool>other</bool>\n\t\t<float>1.5</float>\n\t\t<float>0.75</float>\n\t\t<floatAttr value=\"5.5\"/>\n\t\t<time value=\"2012\"/>\n\t\t<time value=\"201209\"/>\n\t\t<time value=\"20120915\"/>\n\t\t<time value=\"2012091521\"/>\n\t\t<time value=\"201209152122\"/>\n\t\t<time value=\"20120915212215\"/>\n\t\t<time value=\"20120915212215.123\"/>\n\t\t<time value=\"20120915212215.123+0210\"/>\n\t\t<timesingle value=\"\"/>\n\t\t<timezero value=\"0\"/>\n\t</root>\n</document>\n";
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-
-        var r = instance.toJSON();
+        var r = instance.run(doc);
 
         expect(r.data.str).to.equal('value0');
         expect(r.data.attr).to.equal('attr0');
@@ -25078,8 +25024,7 @@ describe('readme', function () {
             ["data", "1:1", "//document/root", compA]
         ]);
 
-        var instance = root.run(xmlfile);
-        var r = instance.toJSON();
+        var r = root.run(xmlfile);
         var e = {
             "data": {
                 "name": "example",
@@ -25094,14 +25039,14 @@ describe('readme', function () {
         };
         expect(r).to.deep.equal(e);
 
-        element.cleanupStep(function () {
-            if (this.js && this.js.flag && this.js.value) {
-                this.js.value = this.js.value + 10
+        element.cleanupStep(function (input) {
+            if (input && input.flag && input.value) {
+                input.value = input.value + 10
             }
+            return input;
         });
 
-        var instance2 = root.run(xmlfile);
-        var r2 = instance2.toJSON();
+        var r2 = root.run(xmlfile);
         e.data.element[0].value = 92;
         expect(r2).to.deep.equal(e);
     });
@@ -25135,10 +25080,11 @@ describe('xpath experiments', function () {
             ['x', '1..1', "@attra"],
             ['w', '0..1', "@attrb"],
         ]);
-        xtype.cleanupStep(function () {
-            if (this.js && this.js.x) {
-                this.js.x = this.js.x.substring(2);
+        xtype.cleanupStep(function (input) {
+            if (input && input.x) {
+                input.x = input.x.substring(2);
             }
+            return input;
         });
         xtype.setXPath("nod[starts-with(@attra, 'x:')]");
 
@@ -25147,10 +25093,11 @@ describe('xpath experiments', function () {
             ['y', '1..1', '@attra'],
             ['w', '0..1', '@attrb'],
         ]);
-        ytype.cleanupStep(function () {
-            if (this.js && this.js.y) {
-                this.js.y = this.js.y.substring(2);
+        ytype.cleanupStep(function (input) {
+            if (input && input.y) {
+                input.y = input.y.substring(2);
             }
+            return input;
         });
         ytype.setXPath("nod[starts-with(@attra, 'y:')]");
 
@@ -25166,8 +25113,7 @@ describe('xpath experiments', function () {
         ]);
 
         var instance = root.instance();
-        instance.run(doc);
-        var result = instance.toJSON();
+        var result = instance.run(doc);
 
         expect(result.data).to.exist;
         expect(result.data.xtype).to.have.length(2);
@@ -25200,8 +25146,7 @@ describe('xpath experiments', function () {
         ]);
 
         var instance = root.instance();
-        instance.run(doc);
-        var result = instance.toJSON();
+        var result = instance.run(doc);
 
         expect(result.data).to.exist;
         expect(result.data.c).to.deep.equal(['c0', 'c2']);

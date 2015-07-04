@@ -39,8 +39,7 @@ describe('readme', function () {
             ["data", "1:1", "//document/root", compA]
         ]);
 
-        var instance = root.run(xmlfile);
-        var r = instance.toJSON();
+        var r = root.run(xmlfile);
         var e = {
             "data": {
                 "name": "example",
@@ -55,14 +54,14 @@ describe('readme', function () {
         };
         expect(r).to.deep.equal(e);
 
-        element.cleanupStep(function () {
-            if (this.js && this.js.flag && this.js.value) {
-                this.js.value = this.js.value + 10
+        element.cleanupStep(function (input) {
+            if (input && input.flag && input.value) {
+                input.value = input.value + 10
             }
+            return input;
         });
 
-        var instance2 = root.run(xmlfile);
-        var r2 = instance2.toJSON();
+        var r2 = root.run(xmlfile);
         e.data.element[0].value = 92;
         expect(r2).to.deep.equal(e);
     });

@@ -14,7 +14,10 @@ var cleanup = bbxml.cleanup;
 describe('cleanup', function () {
     it('clearNulls', function () {
         var id = component.define('id');
-        id.fields[["ida", "1..1", "@ida"], ["idb", "0..1", "@idb"]];
+        id.fields([
+            ["ida", "1..1", "@ida"],
+            ["idb", "0..1", "@idb"]
+        ]);
 
         var p = component.define('p');
         p.fields([
@@ -42,8 +45,7 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_0.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
 
         expect(ra.data).to.exist;
         expect(ra.data).to.not.have.property('null_string');
@@ -86,11 +88,10 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
+        var ra = instance.run(doc);
 
-        var ra = instance.toJSON();
         expect(ra.data).to.exist;
-        expect(ra.data.object).not.to.exits;
+        expect(ra.data.object).not.to.eits;
         expect(ra.data.tcejbo).to.exist;
     });
 
@@ -119,9 +120,8 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
+        var ra = instance.run(doc);
 
-        var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data.object).not.equal({
             c: "propobj_c"
@@ -151,9 +151,8 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
+        var ra = instance.run(doc);
 
-        var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data).not.to.have.property('object');
         expect(ra.data.a).to.equal('propobj_a');
@@ -183,9 +182,7 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
 
         expect(ra.data).to.exist;
         expect(ra.data).to.equal('value');
@@ -214,9 +211,7 @@ describe('cleanup', function () {
         var instance = root.instance();
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
-        instance.run(doc);
-
-        var ra = instance.toJSON();
+        var ra = instance.run(doc);
 
         expect(ra.data).to.exist;
         expect(ra.data).not.to.have.property('object');

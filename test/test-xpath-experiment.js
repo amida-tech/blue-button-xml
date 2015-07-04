@@ -25,10 +25,11 @@ describe('xpath experiments', function () {
             ['x', '1..1', "@attra"],
             ['w', '0..1', "@attrb"],
         ]);
-        xtype.cleanupStep(function () {
-            if (this.js && this.js.x) {
-                this.js.x = this.js.x.substring(2);
+        xtype.cleanupStep(function (input) {
+            if (input && input.x) {
+                input.x = input.x.substring(2);
             }
+            return input;
         });
         xtype.setXPath("nod[starts-with(@attra, 'x:')]");
 
@@ -37,10 +38,11 @@ describe('xpath experiments', function () {
             ['y', '1..1', '@attra'],
             ['w', '0..1', '@attrb'],
         ]);
-        ytype.cleanupStep(function () {
-            if (this.js && this.js.y) {
-                this.js.y = this.js.y.substring(2);
+        ytype.cleanupStep(function (input) {
+            if (input && input.y) {
+                input.y = input.y.substring(2);
             }
+            return input;
         });
         ytype.setXPath("nod[starts-with(@attra, 'y:')]");
 
@@ -56,8 +58,7 @@ describe('xpath experiments', function () {
         ]);
 
         var instance = root.instance();
-        instance.run(doc);
-        var result = instance.toJSON();
+        var result = instance.run(doc);
 
         expect(result.data).to.exist;
         expect(result.data.xtype).to.have.length(2);
@@ -90,8 +91,7 @@ describe('xpath experiments', function () {
         ]);
 
         var instance = root.instance();
-        instance.run(doc);
-        var result = instance.toJSON();
+        var result = instance.run(doc);
 
         expect(result.data).to.exist;
         expect(result.data.c).to.deep.equal(['c0', 'c2']);

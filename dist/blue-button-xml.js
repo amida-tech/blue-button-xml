@@ -196,53 +196,57 @@ var _ = require("lodash");
 var cleanup = module.exports = {};
 
 cleanup.renameField = function (oldn, newn) {
-    var f = function () {
-        if (this.js && this.js[oldn]) {
-            this.js[newn] = this.js[oldn];
-            delete this.js[oldn];
+    var f = function (value) {
+        if (value && value[oldn]) {
+            value[newn] = value[oldn];
+            delete value[oldn];
         }
+        return value;
     };
     return f;
 };
 
-cleanup.replaceWithObject = function (field, value) {
-    var f = function () {
-        if (this.js && this.js[field]) {
-            this.js[field] = value;
+cleanup.replaceWithObject = function (field, newValue) {
+    var f = function (value) {
+        if (value && value[field]) {
+            value[field] = newValue;
         }
+        return value;
     };
     return f;
 };
 
 cleanup.extractAllFields = function (field) { // We need cleanup function to become objects
-    var r = function () {
-        var tmp = this.js && this.js[field];
+    var r = function (value) {
+        var tmp = value && value[field];
         if (tmp) { //HACK: added this if
-            delete this.js[field];
-            if (tmp.js) {
-                Object.keys(tmp.js).forEach(function (m) {
-                    if (this.js[m] === undefined) {
-                        this.js[m] = tmp.js[m];
+            delete value[field];
+            if (tmp) {
+                Object.keys(tmp).forEach(function (m) {
+                    if (value[m] === undefined) {
+                        value[m] = tmp[m];
                     }
                 }, this);
             }
         }
+        return value;
     };
     return r;
 };
 
 cleanup.replaceWithField = function (field) {
-    var r = function () {
-        this.js = this.js && this.js[field];
+    var r = function (value) {
+        return value && value[field];
     };
     return r;
 };
 
 cleanup.removeField = function (field) {
-    var r = function () {
-        if (this.js) {
-            delete this.js[field];
+    var r = function (value) {
+        if (value) {
+            delete value[field];
         }
+        return value;
     };
     return r;
 };
@@ -260,36 +264,6 @@ var isPlainObject = exports.isPlainObject = function (o) {
     return (['object'].indexOf(typeof o) !== -1);
 };
 
-exports.deepForEach = function deepForEach(obj, fns) {
-    var inobj = obj;
-    fns = fns || {};
-
-    if (fns.pre) {
-        obj = fns.pre(obj);
-    }
-
-    var ret;
-    if (obj === null) {
-        ret = null;
-    } else if (Array.isArray(obj)) {
-        ret = obj.map(function (elt) {
-            return deepForEach(elt, fns);
-        });
-    } else if (isPlainObject(obj)) {
-        ret = {};
-        Object.keys(obj).forEach(function (k) {
-            ret[k] = deepForEach(obj[k], fns);
-        });
-    } else {
-        ret = obj;
-    }
-
-    if (fns.post) {
-        ret = fns.post(inobj, ret);
-    }
-    return ret;
-};
-
 exports.exists = function (obj) {
     return obj !== undefined && obj !== null;
 };
@@ -298,14 +272,11 @@ exports.exists = function (obj) {
 "use strict";
 
 var util = require("util");
-var common = require("./common");
 var cleanup = require("./cleanup");
 var componentInstance = require("./componentInstance");
 var xml = require('./xml');
 
 var Parser = require("./parser");
-
-var deepForEach = common.deepForEach;
 
 var component = {};
 
@@ -464,20 +435,16 @@ component.overallParsers = function (sourceKey) {
 component.run = function (xmlText, sourceKey) {
     var instance = this.instance();
     var xmlDoc = xml.parse(xmlText);
-    instance.run(xmlDoc, sourceKey);
-    return instance;
+    return instance.run(xmlDoc, sourceKey);
 };
 
 module.exports = component;
 
-},{"./cleanup":3,"./common":4,"./componentInstance":6,"./parser":7,"./xml":1,"util":13}],6:[function(require,module,exports){
+},{"./cleanup":3,"./componentInstance":6,"./parser":7,"./xml":1,"util":13}],6:[function(require,module,exports){
 "use strict";
 
 var assert = require("assert");
-var common = require("./common");
 var _ = require('lodash');
-
-var deepForEach = common.deepForEach;
 
 var componentInstance = {};
 
@@ -494,12 +461,12 @@ componentInstance.pathToTop = function () {
     return chainUp(this);
 };
 
-componentInstance.cleanup = function (sourceKey) {
+componentInstance.cleanup = function (value, sourceKey) {
     var steps = this.component.overallCleanupSteps(sourceKey);
     steps.forEach(function (stepObj) {
-        stepObj.value.call(this);
+        value = stepObj.value.call(this, value);
     }, this);
-    return this;
+    return value;
 };
 
 componentInstance.run = function (node, sourceKey) {
@@ -516,26 +483,17 @@ componentInstance.run = function (node, sourceKey) {
             }
         }, this);
     }
-    this.cleanup(sourceKey);
-    if ((typeof this.js === 'object') && _.isEmpty(this.js)) {
-        delete this.js;
+    var value = this.cleanup(this.js, sourceKey);
+    if ((typeof value === 'object') && _.isEmpty(value)) {
+        return null;
+    } else {
+        return value;
     }
-};
-
-componentInstance.toJSON = function () {
-    return deepForEach(this, {
-        pre: function (o) {
-            if (componentInstance.isPrototypeOf(o)) {
-                return o.js;
-            }
-            return o;
-        }
-    });
 };
 
 module.exports = componentInstance;
 
-},{"./common":4,"assert":9,"lodash":14}],7:[function(require,module,exports){
+},{"assert":9,"lodash":14}],7:[function(require,module,exports){
 "use strict";
 
 var processor = require("./processor");
@@ -571,17 +529,16 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
         if (component && component.componentName) {
             var instance = component.instance(parentInstance);
             if (component.hasParsers()) {
-                instance.run(match, sourceKey);
+                return instance.run(match, sourceKey);
             } else {
-                instance.run(processor.asString(match), sourceKey);
+                return instance.run(processor.asString(match), sourceKey);
             }
-            return instance.js ? instance : null;
         } else if (component) {
             return component(match);
         } else {
             return processor.asString(match);
         }
-    });
+    }, this);
     jsVal = jsVal.reduce(function (r, v) {
         if ((v !== null) && (v !== undefined)) {
             if ((typeof v !== 'object') || !_.isEmpty(v)) {
@@ -618,7 +575,6 @@ module.exports = Parser;
 },{"./processor":8,"./xml":1,"lodash":14,"util":13}],8:[function(require,module,exports){
 "use strict";
 
-var xpath = require("./common").xpath;
 var xmlutil = require("./xml");
 
 var bbUtil = require("./bbUtil");
@@ -648,7 +604,7 @@ var asTimestampResolution = processor.asTimestampResolution = function (v) {
     return bbUtil.hl7ToPrecision(t);
 };
 
-},{"./bbUtil":2,"./common":4,"./xml":1}],9:[function(require,module,exports){
+},{"./bbUtil":2,"./xml":1}],9:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
