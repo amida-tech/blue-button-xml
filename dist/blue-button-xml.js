@@ -507,17 +507,6 @@ componentInstance.cleanup = function (sourceKey) {
     return this;
 };
 
-componentInstance.setJs = function (path, val) {
-    var parts = path.split(/\./);
-    var hook = this.js;
-    var i;
-
-    for (i = 0; i < parts.length - 1; i++) {
-        hook = hook[parts[i]] || (hook[parts[i]] = {});
-    }
-    hook[parts[i]] = val;
-};
-
 componentInstance.run = function (node, sourceKey) {
     this.node = node;
     var parsers = this.component.overallParsers(sourceKey);
@@ -526,7 +515,10 @@ componentInstance.run = function (node, sourceKey) {
         this.js = node;
     } else {
         parsers.forEach(function (p) {
-            p.run(this, node, sourceKey);
+            var v = p.run(this, node, sourceKey);
+            if ((v !== null) && (v !== undefined)) {
+                _.set(this.js, p.jsPath, v);
+            }
         }, this);
     }
     this.cleanup(sourceKey);
@@ -621,9 +613,9 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
         if (!this.multiple) {
             jsVal = (jsVal.length === 0 ? null : jsVal[0]);
         }
-
-        parentInstance.setJs(this.jsPath, jsVal);
+        return jsVal;
     }
+    return null;
 };
 
 module.exports = Parser;
