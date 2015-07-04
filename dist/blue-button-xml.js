@@ -195,42 +195,6 @@ var _ = require("lodash");
 
 var cleanup = module.exports = {};
 
-cleanup.clearNulls = function () {
-
-    //Purges empty objects from arrays, added to improve phone/email support.
-    for (var obj in this.js) {
-        if (_.isArray(this.js[obj])) {
-            for (var jsobj in this.js[obj]) {
-                if (_.isArray(this.js[obj][jsobj].js) === false) {
-                    if (_.isEmpty(this.js[obj][jsobj].js) && _.isUndefined(this.js[obj][jsobj].js) === false) {
-                        delete this.js[obj][jsobj];
-                    }
-                }
-            }
-        }
-    }
-
-    if (!this.js || this.js === null) {
-        return;
-    }
-
-    if ('object' === typeof this.js) {
-        Object.keys(this.js).forEach(function (k) {
-            if ((this.js[k] === null) ||
-                Array.isArray(this.js[k]) && (this.js[k].length === 0 || this.js[k].filter(function (v) {
-                    return v && v.js !== null;
-                }).length === 0) ||
-                this.js[k].js === null) {
-                delete this.js[k];
-            }
-        }, this);
-
-        if (Object.keys(this.js).length === 0) {
-            this.js = null;
-        }
-    }
-};
-
 cleanup.renameField = function (oldn, newn) {
     var f = function () {
         if (this.js && this.js[oldn]) {
@@ -506,11 +470,8 @@ component.run = function (xmlText, sourceKey) {
     var instance = this.instance();
     var xmlDoc = xml.parse(xmlText);
     instance.run(xmlDoc, sourceKey);
-    instance.cleanupTree(sourceKey);
     return instance;
 };
-
-component.cleanupStep(cleanup.clearNulls);
 
 module.exports = component;
 
@@ -519,6 +480,7 @@ module.exports = component;
 
 var assert = require("assert");
 var common = require("./common");
+var _ = require('lodash');
 
 var deepForEach = common.deepForEach;
 
@@ -535,22 +497,6 @@ componentInstance.pathToTop = function () {
     }
 
     return chainUp(this);
-};
-
-componentInstance.cleanupTree = function (sourceKey) {
-    deepForEach(this, {
-        pre: function (v) {
-            if (componentInstance.isPrototypeOf(v)) {
-                return v.js;
-            }
-            return v;
-        },
-        post: function (v) {
-            if (v && v.cleanup) {
-                v.cleanup(sourceKey);
-            }
-        }
-    });
 };
 
 componentInstance.cleanup = function (sourceKey) {
@@ -582,7 +528,10 @@ componentInstance.run = function (node, sourceKey) {
         parsers.forEach(function (p) {
             p.run(this, node, sourceKey);
         }, this);
-        return this;
+    }
+    this.cleanup(sourceKey);
+    if ((typeof this.js === 'object') && _.isEmpty(this.js)) {
+        delete this.js;
     }
 };
 
@@ -599,12 +548,13 @@ componentInstance.toJSON = function () {
 
 module.exports = componentInstance;
 
-},{"./common":4,"assert":9}],7:[function(require,module,exports){
+},{"./common":4,"assert":9,"lodash":14}],7:[function(require,module,exports){
 "use strict";
 
 var processor = require("./processor");
 var xmlUtil = require("./xml");
 var util = require('util');
+var _ = require('lodash');
 
 var xpath = xmlUtil.xpath;
 
@@ -638,13 +588,21 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
             } else {
                 instance.run(processor.asString(match), sourceKey);
             }
-            return instance;
+            return instance.js ? instance : null;
         } else if (component) {
             return component(match);
         } else {
             return processor.asString(match);
         }
     });
+    jsVal = jsVal.reduce(function (r, v) {
+        if ((v !== null) && (v !== undefined)) {
+            if ((typeof v !== 'object') || !_.isEmpty(v)) {
+                r.push(v);
+            }
+        }
+        return r;
+    }, []);
 
     var msg;
     if (!this.multiple && jsVal.length > 1) {
@@ -659,18 +617,18 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
         parentInstance.errors.push("nullFlavor alert:  missing but required " + this.jsPath + " in " + msg.join(" -> "));
     }
 
-    if (!this.multiple) {
-        jsVal = (jsVal.length === 0 ? null : jsVal[0]);
+    if (jsVal.length) {
+        if (!this.multiple) {
+            jsVal = (jsVal.length === 0 ? null : jsVal[0]);
+        }
+
+        parentInstance.setJs(this.jsPath, jsVal);
     }
-
-    parentInstance.setJs(this.jsPath, jsVal);
-
-    return this;
 };
 
 module.exports = Parser;
 
-},{"./processor":8,"./xml":1,"util":13}],8:[function(require,module,exports){
+},{"./processor":8,"./xml":1,"lodash":14,"util":13}],8:[function(require,module,exports){
 "use strict";
 
 var xpath = require("./common").xpath;

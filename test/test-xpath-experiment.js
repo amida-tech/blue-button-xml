@@ -57,7 +57,6 @@ describe('xpath experiments', function () {
 
         var instance = root.instance();
         instance.run(doc);
-        instance.cleanupTree();
         var result = instance.toJSON();
 
         expect(result.data).to.exist;
@@ -92,7 +91,6 @@ describe('xpath experiments', function () {
 
         var instance = root.instance();
         instance.run(doc);
-        instance.cleanupTree();
         var result = instance.toJSON();
 
         expect(result.data).to.exist;

@@ -43,18 +43,6 @@ describe('cleanup', function () {
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_0.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
-
-        var rb = instance.toJSON();
-        expect(rb.data).to.exist;
-        expect(rb.data).to.have.property('null_string');
-        expect(rb.data).to.have.property('null_object');
-        expect(rb.data).to.have.property('null_object_array');
-        expect(rb.data).to.have.property('empty_object_array')
-        expect(rb.data.array).to.have.length(2);
-        expect(rb.data.array[1]).to.have.property('id');
-
-        instance.cleanupTree();
-
         var ra = instance.toJSON();
 
         expect(ra.data).to.exist;
@@ -100,13 +88,6 @@ describe('cleanup', function () {
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
-        var rb = instance.toJSON();
-        expect(rb.data).to.exist;
-        expect(rb.data.object).to.exits;
-        expect(rb.data.tcejbo).not.to.exist;
-
-        instance.cleanupTree();
-
         var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data.object).not.to.exits;
@@ -140,15 +121,6 @@ describe('cleanup', function () {
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
-        var rb = instance.toJSON();
-        expect(rb.data).to.exist;
-        expect(rb.data.object).to.deep.equal({
-            a: "propobj_a",
-            b: ['propobj_b0', 'propobj_b1']
-        });
-
-        instance.cleanupTree();
-
         var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data.object).not.equal({
@@ -180,17 +152,6 @@ describe('cleanup', function () {
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
-
-        var rb = instance.toJSON();
-        expect(rb.data).to.exist;
-        expect(rb.data.object).to.deep.equal({
-            a: "propobj_a",
-            b: ['propobj_b0', 'propobj_b1']
-        });
-        expect(rb.data).not.to.have.property('a');
-        expect(rb.data).not.to.have.property('b');
-
-        instance.cleanupTree();
 
         var ra = instance.toJSON();
         expect(ra.data).to.exist;
@@ -224,14 +185,6 @@ describe('cleanup', function () {
         var doc = xml.parse(xmlfile);
         instance.run(doc);
 
-        var rb = instance.toJSON();
-        expect(rb.data).to.exist;
-        expect(rb.data).to.have.property('string');
-        expect(rb.data).to.have.property('object');
-        expect(rb.data).to.have.property('array');
-
-        instance.cleanupTree();
-
         var ra = instance.toJSON();
 
         expect(ra.data).to.exist;
@@ -262,12 +215,6 @@ describe('cleanup', function () {
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_1.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
-
-        var rb = instance.toJSON();
-        expect(rb.data).to.exist;
-        expect(rb.data).to.have.property('object');
-
-        instance.cleanupTree();
 
         var ra = instance.toJSON();
 

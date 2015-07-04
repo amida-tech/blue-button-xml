@@ -38,8 +38,6 @@ describe('component', function () {
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_3.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
-        instance.cleanupTree();
-
         var ra = instance.toJSON();
         expect(ra.data).to.exist;
         expect(ra.data.object).to.exits;
@@ -72,7 +70,7 @@ describe('component', function () {
         };
 
         var checkCleanups = function (cus, expected) {
-            var actual = cus.slice(1).map(function (cu) { // Component has a defaul cleanup step
+            var actual = cus.map(function (cu) { // Component has a defaul cleanup step
                 return cu.value();
             });
             expect(actual).to.deep.equal(expected);

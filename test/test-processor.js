@@ -37,7 +37,6 @@ describe('processor', function () {
         var xmlfile = fs.readFileSync(__dirname + '/fixtures/file_2.xml', 'utf-8');
         var doc = xml.parse(xmlfile);
         instance.run(doc);
-        instance.cleanupTree();
 
         var r = instance.toJSON();
 
