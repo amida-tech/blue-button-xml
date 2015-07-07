@@ -84,10 +84,9 @@ exports.xpath = (function () {
 exports.component = require("./lib/component");
 exports.cleanup = require("./lib/cleanup");
 exports.processor = require("./lib/processor");
-exports.common = require("./lib/common");
 exports.xmlUtil = require("./lib/xml");
 
-},{"./lib/cleanup":4,"./lib/common":5,"./lib/component":6,"./lib/processor":9,"./lib/xml":1}],3:[function(require,module,exports){
+},{"./lib/cleanup":4,"./lib/component":5,"./lib/processor":8,"./lib/xml":1}],3:[function(require,module,exports){
 "use strict";
 
 var moment = require("moment");
@@ -197,7 +196,7 @@ exports.hl7ToPrecision = (function () {
     };
 })();
 
-},{"moment":55}],4:[function(require,module,exports){
+},{"moment":54}],4:[function(require,module,exports){
 "use strict";
 
 var _ = require("lodash");
@@ -260,24 +259,7 @@ cleanup.removeField = function (field) {
     return r;
 };
 
-},{"lodash":54}],5:[function(require,module,exports){
-"use strict";
-
-var isPlainObject = exports.isPlainObject = function (o) {
-    if (o === null) {
-        return false;
-    }
-    if (o instanceof Date) {
-        return false;
-    }
-    return (['object'].indexOf(typeof o) !== -1);
-};
-
-exports.exists = function (obj) {
-    return obj !== undefined && obj !== null;
-};
-
-},{}],6:[function(require,module,exports){
+},{"lodash":53}],5:[function(require,module,exports){
 "use strict";
 
 var util = require("util");
@@ -305,8 +287,6 @@ component.define = function (name) {
 
 component.instance = function (parent) {
     var r = Object.create(componentInstance);
-    r.js = {};
-    r.hidden = {};
     r.component = this;
     if (parent) {
         r.parent = parent;
@@ -449,7 +429,7 @@ component.run = function (xmlText, sourceKey) {
 
 module.exports = component;
 
-},{"./cleanup":4,"./componentInstance":7,"./parser":8,"./xml":1,"util":53}],7:[function(require,module,exports){
+},{"./cleanup":4,"./componentInstance":6,"./parser":7,"./xml":1,"util":52}],6:[function(require,module,exports){
 "use strict";
 
 var assert = require("assert");
@@ -470,29 +450,29 @@ componentInstance.pathToTop = function () {
     return chainUp(this);
 };
 
-componentInstance.cleanup = function (value, sourceKey) {
+componentInstance.cleanup = function (value, sourceKey, context) {
     var steps = this.component.overallCleanupSteps(sourceKey);
     steps.forEach(function (stepObj) {
-        value = stepObj.value.call(this, value);
+        value = stepObj.value.call(this, value, context);
     }, this);
     return value;
 };
 
-componentInstance.run = function (node, sourceKey) {
-    this.node = node;
+componentInstance.run = function (node, sourceKey, context) {
+    var value = {};
     var parsers = this.component.overallParsers(sourceKey);
     if (0 === parsers.length) {
         assert(node === null || -1 === ['object'].indexOf(typeof node));
-        this.js = node;
+        value = node;
     } else {
         parsers.forEach(function (p) {
-            var v = p.run(this, node, sourceKey);
+            var v = p.run(this, node, sourceKey, context);
             if ((v !== null) && (v !== undefined)) {
-                _.set(this.js, p.jsPath, v);
+                _.set(value, p.jsPath, v);
             }
         }, this);
     }
-    var value = this.cleanup(this.js, sourceKey);
+    value = this.cleanup(value, sourceKey, context);
     if ((typeof value === 'object') && _.isEmpty(value)) {
         return null;
     } else {
@@ -502,7 +482,7 @@ componentInstance.run = function (node, sourceKey) {
 
 module.exports = componentInstance;
 
-},{"assert":44,"lodash":54}],8:[function(require,module,exports){
+},{"assert":43,"lodash":53}],7:[function(require,module,exports){
 "use strict";
 
 var processor = require("./processor");
@@ -531,16 +511,16 @@ Parser.prototype.init = function (jsPath, cardinality, xpath, component, sourceK
     return this;
 };
 
-Parser.prototype.run = function (parentInstance, node, sourceKey) {
+Parser.prototype.run = function (parentInstance, node, sourceKey, context) {
     var component = this.component;
     var matches = xpath(node, this.xpath);
     var jsVal = matches.map(function (match, i) {
         if (component && component.componentName) {
             var instance = component.instance(parentInstance);
             if (component.hasParsers()) {
-                return instance.run(match, sourceKey);
+                return instance.run(match, sourceKey, context);
             } else {
-                return instance.run(processor.asString(match), sourceKey);
+                return instance.run(processor.asString(match), sourceKey, context);
             }
         } else if (component) {
             return component(match);
@@ -581,7 +561,7 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
 
 module.exports = Parser;
 
-},{"./processor":9,"./xml":1,"lodash":54,"util":53}],9:[function(require,module,exports){
+},{"./processor":8,"./xml":1,"lodash":53,"util":52}],8:[function(require,module,exports){
 "use strict";
 
 var xmlutil = require("./xml");
@@ -613,10 +593,10 @@ var asTimestampResolution = processor.asTimestampResolution = function (v) {
     return bbUtil.hl7ToPrecision(t);
 };
 
-},{"./bbUtil":3,"./xml":1}],10:[function(require,module,exports){
+},{"./bbUtil":3,"./xml":1}],9:[function(require,module,exports){
 module.exports = require('./lib/chai');
 
-},{"./lib/chai":11}],11:[function(require,module,exports){
+},{"./lib/chai":10}],10:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -711,7 +691,7 @@ exports.use(should);
 var assert = require('./chai/interface/assert');
 exports.use(assert);
 
-},{"./chai/assertion":12,"./chai/config":13,"./chai/core/assertions":14,"./chai/interface/assert":15,"./chai/interface/expect":16,"./chai/interface/should":17,"./chai/utils":30,"assertion-error":39}],12:[function(require,module,exports){
+},{"./chai/assertion":11,"./chai/config":12,"./chai/core/assertions":13,"./chai/interface/assert":14,"./chai/interface/expect":15,"./chai/interface/should":16,"./chai/utils":29,"assertion-error":38}],11:[function(require,module,exports){
 /*!
  * chai
  * http://chaijs.com
@@ -844,7 +824,7 @@ module.exports = function (_chai, util) {
   });
 };
 
-},{"./config":13}],13:[function(require,module,exports){
+},{"./config":12}],12:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -901,7 +881,7 @@ module.exports = {
 
 };
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*!
  * chai
  * http://chaijs.com
@@ -2455,7 +2435,7 @@ module.exports = function (chai, _) {
 
 };
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -3720,7 +3700,7 @@ module.exports = function (chai, util) {
   ('Throw', 'throws');
 };
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -3755,7 +3735,7 @@ module.exports = function (chai, util) {
   };
 };
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -3855,7 +3835,7 @@ module.exports = function (chai, util) {
   chai.Should = loadShould;
 };
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*!
  * Chai - addChainingMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -3968,7 +3948,7 @@ module.exports = function (ctx, name, method, chainingBehavior) {
   });
 };
 
-},{"../config":13,"./flag":21,"./transferFlags":37}],19:[function(require,module,exports){
+},{"../config":12,"./flag":20,"./transferFlags":36}],18:[function(require,module,exports){
 /*!
  * Chai - addMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4013,7 +3993,7 @@ module.exports = function (ctx, name, method) {
   };
 };
 
-},{"../config":13,"./flag":21}],20:[function(require,module,exports){
+},{"../config":12,"./flag":20}],19:[function(require,module,exports){
 /*!
  * Chai - addProperty utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4055,7 +4035,7 @@ module.exports = function (ctx, name, getter) {
   });
 };
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /*!
  * Chai - flag utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4089,7 +4069,7 @@ module.exports = function (obj, key, value) {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /*!
  * Chai - getActual utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4109,7 +4089,7 @@ module.exports = function (obj, args) {
   return args.length > 4 ? args[4] : obj._obj;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /*!
  * Chai - getEnumerableProperties utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4136,7 +4116,7 @@ module.exports = function getEnumerableProperties(object) {
   return result;
 };
 
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*!
  * Chai - message composition utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4188,7 +4168,7 @@ module.exports = function (obj, args) {
   return flagMsg ? flagMsg + ': ' + msg : msg;
 };
 
-},{"./flag":21,"./getActual":22,"./inspect":31,"./objDisplay":32}],25:[function(require,module,exports){
+},{"./flag":20,"./getActual":21,"./inspect":30,"./objDisplay":31}],24:[function(require,module,exports){
 /*!
  * Chai - getName utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4210,7 +4190,7 @@ module.exports = function (func) {
   return match && match[1] ? match[1] : "";
 };
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*!
  * Chai - getPathInfo utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4322,7 +4302,7 @@ function _getPathValue (parsed, obj, index) {
   return res;
 }
 
-},{"./hasProperty":29}],27:[function(require,module,exports){
+},{"./hasProperty":28}],26:[function(require,module,exports){
 /*!
  * Chai - getPathValue utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4366,7 +4346,7 @@ module.exports = function(path, obj) {
   return info.value;
 }; 
 
-},{"./getPathInfo":26}],28:[function(require,module,exports){
+},{"./getPathInfo":25}],27:[function(require,module,exports){
 /*!
  * Chai - getProperties utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4403,7 +4383,7 @@ module.exports = function getProperties(object) {
   return result;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*!
  * Chai - hasProperty utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4468,7 +4448,7 @@ module.exports = function hasProperty(name, obj) {
   return name in obj;
 };
 
-},{"./type":38}],30:[function(require,module,exports){
+},{"./type":37}],29:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011 Jake Luer <jake@alogicalparadox.com>
@@ -4596,7 +4576,7 @@ exports.addChainableMethod = require('./addChainableMethod');
 exports.overwriteChainableMethod = require('./overwriteChainableMethod');
 
 
-},{"./addChainableMethod":18,"./addMethod":19,"./addProperty":20,"./flag":21,"./getActual":22,"./getMessage":24,"./getName":25,"./getPathInfo":26,"./getPathValue":27,"./hasProperty":29,"./inspect":31,"./objDisplay":32,"./overwriteChainableMethod":33,"./overwriteMethod":34,"./overwriteProperty":35,"./test":36,"./transferFlags":37,"./type":38,"deep-eql":40}],31:[function(require,module,exports){
+},{"./addChainableMethod":17,"./addMethod":18,"./addProperty":19,"./flag":20,"./getActual":21,"./getMessage":23,"./getName":24,"./getPathInfo":25,"./getPathValue":26,"./hasProperty":28,"./inspect":30,"./objDisplay":31,"./overwriteChainableMethod":32,"./overwriteMethod":33,"./overwriteProperty":34,"./test":35,"./transferFlags":36,"./type":37,"deep-eql":39}],30:[function(require,module,exports){
 // This is (almost) directly from Node.js utils
 // https://github.com/joyent/node/blob/f8c335d0caf47f16d31413f89aa28eda3878e3aa/lib/util.js
 
@@ -4931,7 +4911,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-},{"./getEnumerableProperties":23,"./getName":25,"./getProperties":28}],32:[function(require,module,exports){
+},{"./getEnumerableProperties":22,"./getName":24,"./getProperties":27}],31:[function(require,module,exports){
 /*!
  * Chai - flag utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4982,7 +4962,7 @@ module.exports = function (obj) {
   }
 };
 
-},{"../config":13,"./inspect":31}],33:[function(require,module,exports){
+},{"../config":12,"./inspect":30}],32:[function(require,module,exports){
 /*!
  * Chai - overwriteChainableMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5037,7 +5017,7 @@ module.exports = function (ctx, name, method, chainingBehavior) {
   };
 };
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*!
  * Chai - overwriteMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5090,7 +5070,7 @@ module.exports = function (ctx, name, method) {
   }
 };
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /*!
  * Chai - overwriteProperty utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5146,7 +5126,7 @@ module.exports = function (ctx, name, getter) {
   });
 };
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*!
  * Chai - test utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5174,7 +5154,7 @@ module.exports = function (obj, args) {
   return negate ? !expr : expr;
 };
 
-},{"./flag":21}],37:[function(require,module,exports){
+},{"./flag":20}],36:[function(require,module,exports){
 /*!
  * Chai - transferFlags utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5220,7 +5200,7 @@ module.exports = function (assertion, object, includeAll) {
   }
 };
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /*!
  * Chai - type utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5267,7 +5247,7 @@ module.exports = function (obj) {
   return typeof obj;
 };
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*!
  * assertion-error
  * Copyright(c) 2013 Jake Luer <jake@qualiancy.com>
@@ -5379,10 +5359,10 @@ AssertionError.prototype.toJSON = function (stack) {
   return props;
 };
 
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = require('./lib/eql');
 
-},{"./lib/eql":41}],41:[function(require,module,exports){
+},{"./lib/eql":40}],40:[function(require,module,exports){
 /*!
  * deep-eql
  * Copyright(c) 2013 Jake Luer <jake@alogicalparadox.com>
@@ -5641,10 +5621,10 @@ function objectEqual(a, b, m) {
   return true;
 }
 
-},{"buffer":45,"type-detect":42}],42:[function(require,module,exports){
+},{"buffer":44,"type-detect":41}],41:[function(require,module,exports){
 module.exports = require('./lib/type');
 
-},{"./lib/type":43}],43:[function(require,module,exports){
+},{"./lib/type":42}],42:[function(require,module,exports){
 /*!
  * type-detect
  * Copyright(c) 2013 jake luer <jake@alogicalparadox.com>
@@ -5788,7 +5768,7 @@ Library.prototype.test = function (obj, type) {
   }
 };
 
-},{}],44:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -6149,7 +6129,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":53}],45:[function(require,module,exports){
+},{"util/":52}],44:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -7585,7 +7565,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":46,"ieee754":47,"is-array":48}],46:[function(require,module,exports){
+},{"base64-js":45,"ieee754":46,"is-array":47}],45:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -7711,7 +7691,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -7797,7 +7777,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],48:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 
 /**
  * isArray
@@ -7832,7 +7812,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],49:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -7857,7 +7837,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],50:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -8085,7 +8065,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":51}],51:[function(require,module,exports){
+},{"_process":50}],50:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -8145,14 +8125,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -8742,7 +8722,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":52,"_process":51,"inherits":49}],54:[function(require,module,exports){
+},{"./support/isBuffer":51,"_process":50,"inherits":48}],53:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -21097,7 +21077,7 @@ function hasOwnProperty(obj, prop) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],55:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.3
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -24209,7 +24189,7 @@ function hasOwnProperty(obj, prop) {
     return _moment;
 
 }));
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 "use strict";
 
 var chai = require("chai");
@@ -24275,7 +24255,7 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
     });
 });
 
-},{"../lib/bbUtil":3,"chai":10}],57:[function(require,module,exports){
+},{"../lib/bbUtil":3,"chai":9}],56:[function(require,module,exports){
 "use strict";
 
 
@@ -24496,7 +24476,7 @@ describe('cleanup', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10}],58:[function(require,module,exports){
+},{"../index":2,"../lib/xml":1,"chai":9}],57:[function(require,module,exports){
 "use strict";
 
 var path = require('path');
@@ -24769,7 +24749,7 @@ describe('component', function () {
     });
 });
 
-},{"../index":2,"chai":10,"path":50}],59:[function(require,module,exports){
+},{"../index":2,"chai":9,"path":49}],58:[function(require,module,exports){
 var expect = require('chai').expect;
 
 
@@ -24797,7 +24777,7 @@ describe('componentInstance.js', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10}],60:[function(require,module,exports){
+},{"../index":2,"../lib/xml":1,"chai":9}],59:[function(require,module,exports){
 "use strict";
 
 
@@ -24851,7 +24831,7 @@ describe('example_0', function () {
     });
 });
 
-},{"../index":2,"chai":10}],61:[function(require,module,exports){
+},{"../index":2,"chai":9}],60:[function(require,module,exports){
 var expect = require('chai').expect;
 
 
@@ -24912,7 +24892,7 @@ describe('parser.js', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10}],62:[function(require,module,exports){
+},{"../index":2,"../lib/xml":1,"chai":9}],61:[function(require,module,exports){
 "use strict";
 
 
@@ -24982,7 +24962,7 @@ describe('processor', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10}],63:[function(require,module,exports){
+},{"../index":2,"../lib/xml":1,"chai":9}],62:[function(require,module,exports){
 "use strict";
 
 
@@ -25052,7 +25032,7 @@ describe('readme', function () {
     });
 });
 
-},{"../index":2,"chai":10}],64:[function(require,module,exports){
+},{"../index":2,"chai":9}],63:[function(require,module,exports){
 "use strict";
 
 
@@ -25153,42 +25133,4 @@ describe('xpath experiments', function () {
     });
 });
 
-},{"../index":2,"../lib/xml":1,"chai":10}],65:[function(require,module,exports){
-"use strict";
-
-var path = require('path');
-
-var chai = require('chai');
-
-var bbxml = require('../index');
-var xml = require('../lib/xml');
-
-var expect = chai.expect;
-
-var component = bbxml.component;
-var common = bbxml.common;
-
-describe('common', function () {
-    it('isPlainObject', function () {
-        expect(common.isPlainObject(null)).to.be.false;
-        expect(common.isPlainObject(new Date())).to.be.false;
-        expect(common.isPlainObject({
-            a: "v"
-        })).to.be.true;
-    });
-
-    it('exists', function () {
-        expect(common.exists(undefined)).to.be.false;
-        expect(common.exists(null)).to.be.false;
-        expect(common.exists("test")).to.be.true;
-        expect(common.exists({
-            a: "v"
-        })).to.be.true;
-        expect(common.exists([{
-            a: "v"
-        }])).to.be.true;
-        expect(common.exists([])).to.be.true;
-    });
-});
-
-},{"../index":2,"../lib/xml":1,"chai":10,"path":50}]},{},[56,57,58,59,60,61,62,63,64,65]);
+},{"../index":2,"../lib/xml":1,"chai":9}]},{},[55,56,57,58,59,60,61,62,63]);

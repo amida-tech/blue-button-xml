@@ -188,7 +188,7 @@ exports.hl7ToPrecision = (function () {
     };
 })();
 
-},{"moment":15}],3:[function(require,module,exports){
+},{"moment":14}],3:[function(require,module,exports){
 "use strict";
 
 var _ = require("lodash");
@@ -251,24 +251,7 @@ cleanup.removeField = function (field) {
     return r;
 };
 
-},{"lodash":14}],4:[function(require,module,exports){
-"use strict";
-
-var isPlainObject = exports.isPlainObject = function (o) {
-    if (o === null) {
-        return false;
-    }
-    if (o instanceof Date) {
-        return false;
-    }
-    return (['object'].indexOf(typeof o) !== -1);
-};
-
-exports.exists = function (obj) {
-    return obj !== undefined && obj !== null;
-};
-
-},{}],5:[function(require,module,exports){
+},{"lodash":13}],4:[function(require,module,exports){
 "use strict";
 
 var util = require("util");
@@ -296,8 +279,6 @@ component.define = function (name) {
 
 component.instance = function (parent) {
     var r = Object.create(componentInstance);
-    r.js = {};
-    r.hidden = {};
     r.component = this;
     if (parent) {
         r.parent = parent;
@@ -440,7 +421,7 @@ component.run = function (xmlText, sourceKey) {
 
 module.exports = component;
 
-},{"./cleanup":3,"./componentInstance":6,"./parser":7,"./xml":1,"util":13}],6:[function(require,module,exports){
+},{"./cleanup":3,"./componentInstance":5,"./parser":6,"./xml":1,"util":12}],5:[function(require,module,exports){
 "use strict";
 
 var assert = require("assert");
@@ -461,29 +442,29 @@ componentInstance.pathToTop = function () {
     return chainUp(this);
 };
 
-componentInstance.cleanup = function (value, sourceKey) {
+componentInstance.cleanup = function (value, sourceKey, context) {
     var steps = this.component.overallCleanupSteps(sourceKey);
     steps.forEach(function (stepObj) {
-        value = stepObj.value.call(this, value);
+        value = stepObj.value.call(this, value, context);
     }, this);
     return value;
 };
 
-componentInstance.run = function (node, sourceKey) {
-    this.node = node;
+componentInstance.run = function (node, sourceKey, context) {
+    var value = {};
     var parsers = this.component.overallParsers(sourceKey);
     if (0 === parsers.length) {
         assert(node === null || -1 === ['object'].indexOf(typeof node));
-        this.js = node;
+        value = node;
     } else {
         parsers.forEach(function (p) {
-            var v = p.run(this, node, sourceKey);
+            var v = p.run(this, node, sourceKey, context);
             if ((v !== null) && (v !== undefined)) {
-                _.set(this.js, p.jsPath, v);
+                _.set(value, p.jsPath, v);
             }
         }, this);
     }
-    var value = this.cleanup(this.js, sourceKey);
+    value = this.cleanup(value, sourceKey, context);
     if ((typeof value === 'object') && _.isEmpty(value)) {
         return null;
     } else {
@@ -493,7 +474,7 @@ componentInstance.run = function (node, sourceKey) {
 
 module.exports = componentInstance;
 
-},{"assert":9,"lodash":14}],7:[function(require,module,exports){
+},{"assert":8,"lodash":13}],6:[function(require,module,exports){
 "use strict";
 
 var processor = require("./processor");
@@ -522,16 +503,16 @@ Parser.prototype.init = function (jsPath, cardinality, xpath, component, sourceK
     return this;
 };
 
-Parser.prototype.run = function (parentInstance, node, sourceKey) {
+Parser.prototype.run = function (parentInstance, node, sourceKey, context) {
     var component = this.component;
     var matches = xpath(node, this.xpath);
     var jsVal = matches.map(function (match, i) {
         if (component && component.componentName) {
             var instance = component.instance(parentInstance);
             if (component.hasParsers()) {
-                return instance.run(match, sourceKey);
+                return instance.run(match, sourceKey, context);
             } else {
-                return instance.run(processor.asString(match), sourceKey);
+                return instance.run(processor.asString(match), sourceKey, context);
             }
         } else if (component) {
             return component(match);
@@ -572,7 +553,7 @@ Parser.prototype.run = function (parentInstance, node, sourceKey) {
 
 module.exports = Parser;
 
-},{"./processor":8,"./xml":1,"lodash":14,"util":13}],8:[function(require,module,exports){
+},{"./processor":7,"./xml":1,"lodash":13,"util":12}],7:[function(require,module,exports){
 "use strict";
 
 var xmlutil = require("./xml");
@@ -604,7 +585,7 @@ var asTimestampResolution = processor.asTimestampResolution = function (v) {
     return bbUtil.hl7ToPrecision(t);
 };
 
-},{"./bbUtil":2,"./xml":1}],9:[function(require,module,exports){
+},{"./bbUtil":2,"./xml":1}],8:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -965,7 +946,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":13}],10:[function(require,module,exports){
+},{"util/":12}],9:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -990,7 +971,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1050,14 +1031,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1647,7 +1628,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":12,"_process":11,"inherits":10}],14:[function(require,module,exports){
+},{"./support/isBuffer":11,"_process":10,"inherits":9}],13:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -14002,7 +13983,7 @@ function hasOwnProperty(obj, prop) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.3
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -17120,7 +17101,6 @@ function hasOwnProperty(obj, prop) {
 exports.component = require("./lib/component");
 exports.cleanup = require("./lib/cleanup");
 exports.processor = require("./lib/processor");
-exports.common = require("./lib/common");
 exports.xmlUtil = require("./lib/xml");
 
-},{"./lib/cleanup":3,"./lib/common":4,"./lib/component":5,"./lib/processor":8,"./lib/xml":1}]},{},["blue-button-xml"]);
+},{"./lib/cleanup":3,"./lib/component":4,"./lib/processor":7,"./lib/xml":1}]},{},["blue-button-xml"]);
