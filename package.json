@@ -44,7 +44,7 @@
         "grunt-contrib-watch": "~0.6.1",
         "grunt-coveralls": "~1.0.0",
         "grunt-jsbeautifier": "~0.2.10",
-        "grunt-mocha-phantomjs": "~0.6.1",
+        "grunt-mocha-phantomjs": "~4.0.0",
         "grunt-mocha-test": "~0.12.7",
         "mocha": "~2.2.4",
         "mocha-lcov-reporter": "0.0.2"
