@@ -1,6 +1,6 @@
 {
     "name": "blue-button-xml",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "description": "Blue Button XML Parsing Infrastructure",
     "main": "./index.js",
     "browser": {
@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "brfs": "~1.4.0",
-        "chai": "~2.2.0",
+        "chai": "~3.0.0",
         "coveralls": "~2.11.2",
         "grunt": "~0.4.5",
         "grunt-browserify": "~3.7.0",
@@ -44,7 +44,7 @@
         "grunt-contrib-watch": "~0.6.1",
         "grunt-coveralls": "~1.0.0",
         "grunt-jsbeautifier": "~0.2.10",
-        "grunt-mocha-phantomjs": "~0.6.1",
+        "grunt-mocha-phantomjs": "~2.0.0",
         "grunt-mocha-test": "~0.12.7",
         "mocha": "~2.2.4",
         "mocha-lcov-reporter": "0.0.2"
