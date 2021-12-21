@@ -43,14 +43,6 @@ describe('hl7 to/from iso8601 date/time conversion', function () {
         hl7: '20120915211442.123-0500',
         iso8601: "2012-09-16T02:14:42.123Z",
         precision: 'subsecond'
-    }, {
-        hl7: '',
-        iso8601: null,
-        precision: null
-    }, {
-        hl7: '0',
-        iso8601: null,
-        precision: null
     }];
 
     testCases.forEach(function (testCase) {

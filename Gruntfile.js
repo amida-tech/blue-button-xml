@@ -130,11 +130,11 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('beautify', ['jsbeautifier:beautify']);
-    grunt.registerTask('browser-test', ['browserify:require', 'browserify:tests', 'connect:server', 'mocha_phantomjs']);
+    // grunt.registerTask('browser-test', ['browserify:require', 'browserify:tests', 'connect:server', 'mocha_phantomjs']);
     grunt.registerTask('mocha', ['mochaTest']);
     grunt.registerTask('commit', ['jshint', 'mocha']);
 
-    grunt.registerTask('default', ['beautify', 'jshint', 'mocha', 'browser-test']);
+    grunt.registerTask('default', ['beautify', 'jshint', 'mocha' /*, 'browser-test'*/ ]);
 
     grunt.registerTask('timestamp', function () {
         grunt.log.subhead(Date());

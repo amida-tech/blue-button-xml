@@ -42,9 +42,9 @@ describe('component', function () {
 
         var ra = instance.toJSON();
         expect(ra.data).to.exist;
-        expect(ra.data.object).to.exits;
-        expect(ra.data.string).to.exits;
-        expect(ra.data.array).to.exits;
+        expect(ra.data.object).to.exists;
+        expect(ra.data.string).to.exists;
+        expect(ra.data.array).to.exists;
     });
 
     describe('permutation infrastrucure', function () {

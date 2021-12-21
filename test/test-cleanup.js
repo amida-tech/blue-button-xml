@@ -102,15 +102,15 @@ describe('cleanup', function () {
 
         var rb = instance.toJSON();
         expect(rb.data).to.exist;
-        expect(rb.data.object).to.exits;
-        expect(rb.data.tcejbo).not.to.exist;
+        expect(rb.data.object).to.exists;
+        expect(rb.data.tcejbo).not.to.exists;
 
         instance.cleanupTree();
 
         var ra = instance.toJSON();
         expect(ra.data).to.exist;
-        expect(ra.data.object).not.to.exits;
-        expect(ra.data.tcejbo).to.exist;
+        expect(ra.data.object).not.to.exists;
+        expect(ra.data.tcejbo).to.exists;
     });
 
     it('replaceObject', function () {
