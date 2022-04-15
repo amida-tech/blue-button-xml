@@ -1,4 +1,4 @@
-blue-button-xml
+Blue Button XML
 =================
 
 Blue Button XML Parsing Infrastructure
@@ -20,8 +20,8 @@ This library is primarily implemented for [node.js](http://nodejs.org) and is av
 
 ### Prerequisites
 
-- Node.js (v0.10+) and NPM
-- Grunt.js
+- Node.js (v14.19+) and NPM
+- Grunt
 
 ```
 # Install dependencies
@@ -174,7 +174,6 @@ compB.cleanupStep(compBStep3);
 blue-button-xml generates a JSON object from this definition with 'name', 'element', and 'addlElememt'.
 Normalization steps will include 'compAStep1', 'compAStep2', and 'compBStep3'.
 
-<a name="vendorField"/>
 ## Vendor Specific Fields
 
 Any field in the component can be redefined for a specific key
