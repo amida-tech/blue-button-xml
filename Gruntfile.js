@@ -60,9 +60,11 @@ module.exports = function (grunt) {
       }
     },
     run: {
-      jest: {
-        exec: 'npx jest',
-        args: ['test']
+      test: {
+        exec: 'npx jest'
+      },
+      coverage: {
+        exec: 'npx jest --coverage'
       }
     },
     connect: {
@@ -75,9 +77,11 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['beautify', 'jshint', 'run']);
+  grunt.registerTask('default', ['beautify', 'jshint', 'test']);
   grunt.registerTask('beautify', ['jsbeautifier:beautify']);
-  grunt.registerTask('commit', ['default']);
+  grunt.registerTask('test', ['run:test']);
+  grunt.registerTask('coverage', ['run:coverage']);
+  grunt.registerTask('commit', ['jshint', 'test']);
   grunt.registerTask('timestamp', function () {
     grunt.log.subhead(Date());
   });

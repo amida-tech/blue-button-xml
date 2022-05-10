@@ -3,7 +3,7 @@ Blue Button XML
 
 Blue Button XML Parsing Infrastructure
 
-[![NPM](https://nodei.co/npm/blue-button-xml.png)](https://nodei.co/npm/blue-button-xml/)
+[![NPM](https://nodei.co/npm/@amida-tech/blue-button-xml.png)](https://nodei.co/npm/@amida-tech/blue-button-xml/)
 
 [![Build Status](https://travis-ci.org/amida-tech/blue-button-xml.svg)](https://travis-ci.org/amida-tech/blue-button-xml)
 [![Coverage Status](https://coveralls.io/repos/amida-tech/blue-button-xml/badge.png)](https://coveralls.io/r/amida-tech/blue-button-xml)
@@ -39,7 +39,7 @@ grunt
 
 Require blue-button-xml module
 ``` javascript
-var bbxml = require("blue-button-xml");
+var bbxml = require("@amida-tech/blue-button-xml");
 ```
 and load some XML content in an `example.xml`
 ``` xml
