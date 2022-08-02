@@ -1,6 +1,10 @@
 # blue-button-xml Release Notes
 
-## v1.8.3 - April 15, 2022
+## v1.8.5 - May 31, 2022
+
+- Patch update: GHSA-rm36-94g8-835r - Race Condition in Grunt
+
+## v1.8.4 - April 15, 2022
 
 - Patch update: upgraded dev dependencies
 - Converted tests and coverages to jest

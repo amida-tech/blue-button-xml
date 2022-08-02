@@ -1,6 +1,6 @@
 {
   "name": "@amida-tech/blue-button-xml",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "Blue Button XML Parsing Infrastructure",
   "main": "./index.js",
   "browser": {
@@ -38,12 +38,12 @@
   ],
   "license": "Apache-2.0",
   "engines": {
-    "node": ">= 14.19.2"
+    "node": ">= 14.19.3"
   },
   "dependencies": {
     "libxmljs": "^0.19.10",
     "lodash": "^4.17.21",
-    "moment": "^2.29.3"
+    "moment": "^2.29.4"
   },
   "devDependencies": {
     "grunt": "^1.5.3",
