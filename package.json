@@ -41,7 +41,7 @@
     "node": ">= 14.19.3"
   },
   "dependencies": {
-    "@manhydra/libxmljs": "^0.19.11",
+    "@manhydra/libxmljs": "^0.19.12",
     "lodash": "^4.17.21",
     "moment": "^2.29.4"
   },
