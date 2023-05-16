@@ -1,47 +1,47 @@
 {
-    "name": "blue-button-xml",
-    "version": "1.8.1",
-    "description": "Blue Button XML Parsing Infrastructure",
-    "main": "./index.js",
-    "browser": {
-        "./lib/xml.js": "./browser/lib/xml.js"
+  "name": "blue-button-xml",
+  "version": "1.8.7",
+  "description": "Blue Button XML Parsing Infrastructure",
+  "main": "./index.js",
+  "browser": {
+    "./lib/xml.js": "./browser/lib/xml.js"
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "author": "Dmitry Kachaev <dmitry@amida-tech.com>",
+  "contributors": [
+    {
+      "name": "Matthew McCall",
+      "email": "matt@amida-tech.com"
     },
-    "directories": {
-        "doc": "docs",
-        "lib": "lib"
+    {
+      "name": "Afsin Ustundag",
+      "email": "afsin.ustundag@us.pwc.com"
     },
-    "scripts": {
-        "test": "grunt"
+    {
+      "name": "Matt Martz",
+      "email": "matt.martz@amida-tech.com"
     },
-    "author": "Dmitry Kachaev <dmitry@amida-tech.com>",
-    "contributors": [
-      {
-        "name": "Matthew McCall",
-        "email": "matt@amida-tech.com"
-      },
-      {
-        "name": "Afsin Ustundag",
-        "email": "afsin.ustundag@us.pwc.com"
-      },
-      {
-        "name": "Matt Martz",
-        "email": "matt.martz@amida-tech.com"
-      },
-      {
-        "name": "Christopher Best",
-        "email": "bestchris@gmail.com"
-      },
-      {
-        "name": "Marc Sylvestre",
-        "email": "marc.sylvestre@manhydra.com"
-      }
-    ],
+    {
+      "name": "Christopher Best",
+      "email": "bestchris@gmail.com"
+    },
+    {
+      "name": "Marc Sylvestre",
+      "email": "marc.sylvestre@manhydra.com"
+    }
+  ],
   "license": "Apache-2.0",
   "engines": {
   "node": ">= 14.19.3"
   },
   "dependencies": {
-    "libxmljs": "^0.19.10",
+    "@manhydra/libxmljs": "^0.19.12",
     "lodash": "^4.17.21",
     "moment": "^2.29.4"
   },
@@ -52,7 +52,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-jsbeautifier": "^0.2.13",
     "grunt-run": "^0.8.1",
-    "jest": "^27.5.1"
+    "jest": "^29.3.1"
   },
   "repository": {
     "type": "git",
