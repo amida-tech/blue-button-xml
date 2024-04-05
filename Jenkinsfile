@@ -11,12 +11,6 @@ pipeline {
         sh 'node --version'
       }
     }
-    stage('Setup') {
-      steps {
-        echo 'Cloning repo...'
-        git branch: 'OSI-25-routine-maintenance', url: 'https://github.com/amida-tech/blue-button-xml.git'
-      }
-    }
     stage('Build') {
       steps {
         echo 'Installing dependencies...'
