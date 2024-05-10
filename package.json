@@ -1,6 +1,6 @@
 {
   "name": "@amida-tech/blue-button-xml",
-  "version": "1.8.9",
+  "version": "1.8.10",
   "description": "Blue Button XML Parsing Infrastructure",
   "main": "./index.js",
   "browser": {
